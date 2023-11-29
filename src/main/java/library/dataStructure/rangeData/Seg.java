@@ -1,6 +1,13 @@
-package library;
+package library.dataStructure.rangeData;
 
-abstract class Seg<V, F> {
+/**
+ * セグメント木の抽象クラス
+ * @author yuuki_n
+ *
+ * @param <V>
+ * @param <F>
+ */
+abstract class Seg<V, F> extends RangeData<V, F>{
   protected int n,log;
   private V[] val;
   private F[] lazy;
@@ -22,18 +29,49 @@ abstract class Seg<V, F> {
       merge(i);
   }
 
+  /**
+   * @return Vの単位元
+   */
   protected abstract V e();
 
+  /**
+   * @param i
+   * @return i番目の初期値
+   */
   protected V init(int i){ return e(); }
 
+  /**
+   * @param v
+   * @param f
+   * @param l
+   * @param r
+   * @return [l,r)を集約した値vにfを作用させた値
+   */
   protected abstract V map(V v,F f,int l,int r);
 
   protected void rangeMap(int i){ val[i] = map(val[i],lazy[i],l[i],r[i]); }
 
-  protected V agg(V v0,V v1){ return null; }
+  /**
+   * @param a
+   * @param b
+   * @return aとbの集約
+   */
+  protected V agg(V a,V b){ return null; }
 
-  protected F comp(F f0,F f1){ return null; }
+  /**
+   *
+   * @param a
+   * @param b
+   * @return a,bの合成
+   */
+  protected F comp(F a,F b){ return null; }
 
+  /**
+   * 遅延分があれば位置iのノードに作用させる
+   * 子ノードに伝播させる
+   * @param i
+   * @return
+   */
   protected V eval(int i){
     if (i < n && lazy[i] != null) {
       rangeMap(i);
@@ -44,8 +82,17 @@ abstract class Seg<V, F> {
     return val[i];
   }
 
+  /**
+   * 位置iのノードの値を子から計算する
+   * @param i
+   */
   private void merge(int i){ val[i] = agg(eval(i <<1),eval(i <<1 |1)); }
 
+  /**
+   * 位置iのノードにfの作用を置く
+   * @param i
+   * @param f
+   */
   protected void prop(int i,F f){
     if (i < n)
       lazy[i] = lazy[i] == null ? f : comp(lazy[i],f);
@@ -53,6 +100,11 @@ abstract class Seg<V, F> {
       val[i] = map(val[i],f,l[i],r[i]);
   }
 
+  /**
+   * [l,r)をカバーするノード達を再計算する
+   * @param l
+   * @param r
+   */
   protected void up(int l,int r){
     l = oddPart(l +n);
     r = oddPart(r +n);
@@ -62,6 +114,11 @@ abstract class Seg<V, F> {
       merge(r >>= 1);
   }
 
+  /**
+   * [l,r)をカバーするノード達まで遅延分を降ろす
+   * @param l
+   * @param r
+   */
   protected void down(int l,int r){
     l = oddPart(l +n);
     r = oddPart(r +n);
@@ -75,9 +132,11 @@ abstract class Seg<V, F> {
 
   private int oddPart(int i){ return i /(i &-i); }
 
-  protected void upd(int i,F f){ prop(i +n,f); }
+  @Override
+  public void upd(int i,F f){ prop(i +n,f); }
 
-  protected void upd(int l,int r,F f){
+  @Override
+  public void upd(int l,int r,F f){
     l += n;
     r += n;
     do {
@@ -88,9 +147,11 @@ abstract class Seg<V, F> {
     } while ((l >>= 1) < (r >>= 1));
   }
 
-  protected V get(int i){ return val[i +n]; }
+  @Override
+  public V get(int i){ return val[i +n]; }
 
-  protected V get(int l,int r){
+  @Override
+  public V get(int l,int r){
     l += n;
     r += n;
     V vl = e(),vr = e();
