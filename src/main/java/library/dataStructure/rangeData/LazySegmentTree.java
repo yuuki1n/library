@@ -12,10 +12,10 @@ abstract class LazySegmentTree<V, F> extends Seg<V, F>{
   LazySegmentTree(int n){ super(n); }
 
   @Override
-  protected abstract V agg(V v0,V v1);
+  protected abstract V agg(V a,V b);
 
   @Override
-  protected abstract F comp(F f0,F f1);
+  protected abstract F comp(F a,F b);
 
   @Override
   public void upd(int i,F f){ upd(i,i +1,f); }
