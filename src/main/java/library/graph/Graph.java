@@ -58,5 +58,5 @@ public class Graph<L> {
    * @param u
    * @return 頂点uに入る辺list
    */
-  public List<Edge<L>> back(int ui){ return bk[ui]; }
+  public List<Edge<L>> back(int u){ return bk[u]; }
 }

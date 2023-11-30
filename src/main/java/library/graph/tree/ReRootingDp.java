@@ -15,12 +15,12 @@ import library.graph.Graph;
  * @param <D>dpでメモする値の型
  * @param <A>解の型
  */
-@SuppressWarnings("unchecked")
 abstract class ReRootingDp<L, D, A> extends Graph<L>{
   private D[] dp;
   private A[] ans;
   private Edge<L>[][] g;
 
+  @SuppressWarnings("unchecked")
   public ReRootingDp(int N){
     super(N,false);
     dp = (D[]) new Object[2 *N];
@@ -74,6 +74,7 @@ abstract class ReRootingDp<L, D, A> extends Graph<L>{
   /**
    * 計算する
    */
+  @SuppressWarnings("unchecked")
   public void calc(){
     for (var e:es)
       e.re.id = e.id +n;
