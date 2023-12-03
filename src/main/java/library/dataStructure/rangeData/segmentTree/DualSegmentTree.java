@@ -1,4 +1,4 @@
-package library.dataStructure.rangeData;
+package library.dataStructure.rangeData.segmentTree;
 
 /**
  * 区間作用1点取得のセグメント木

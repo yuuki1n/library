@@ -9,7 +9,7 @@ package library.dataStructure.rangeData;
  * @param <V> 管理するデータ型
  * @param <F> 作用のデータ型
  */
-abstract class RangeData<V, F> {
+public abstract class RangeData<V, F> {
 
   /**
    * i番目の値にfを作用させる

@@ -1,4 +1,6 @@
-package library.dataStructure.rangeData;
+package library.dataStructure.rangeData.segmentTree;
+
+import library.dataStructure.rangeData.RangeData;
 
 /**
  * セグメント木の抽象クラス
@@ -7,7 +9,7 @@ package library.dataStructure.rangeData;
  * @param <V>
  * @param <F>
  */
-abstract class Seg<V, F> extends RangeData<V, F>{
+public abstract class Seg<V, F> extends RangeData<V, F>{
   protected int n,log;
   private V[] val;
   private F[] lazy;
