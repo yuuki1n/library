@@ -33,7 +33,6 @@ public class Mod61{
         ret = mul(ret,x);
       x = mul(x,x);
     } while (0 < (n >>= 1));
-
     return ret;
   }
 
