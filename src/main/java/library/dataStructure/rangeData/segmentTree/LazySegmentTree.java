@@ -1,44 +1,48 @@
 package library.dataStructure.rangeData.segmentTree;
 
+import library.dataStructure.rangeData.base.BaseF;
+import library.dataStructure.rangeData.base.BaseV;
+
 /**
  * 区間作用区間取得のセグメント木
  * @author yuuki_n
  *
- * @param <V>
- * @param <F>
+ * @param <VT> 値の型
+ * @param <FT> 作用の型
  */
-abstract class LazySegmentTree<V, F> extends Seg<V, F>{
 
-  LazySegmentTree(int n){ super(n); }
+abstract class LazySegmentTree<VT extends BaseV, FT extends BaseF> extends Seg<VT, FT>{
 
-  @Override
-  protected abstract V agg(V a,V b);
+  public LazySegmentTree(int n){ super(n); }
 
   @Override
-  protected abstract F comp(F a,F b);
+  protected abstract void agg(VT v,VT a,VT b);
 
   @Override
-  public void upd(int i,F f){ upd(i,i +1,f); }
+  protected abstract FT comp(FT a,FT b);
+
+  @Override
+  public void upd(int i,FT f){ upd(i,i +1,f); }
 
   /**
    * 更新する前に遅延分を降ろす
    * 更新後に親ノード達を再計算する
    */
   @Override
-  public void upd(int l,int r,F f){
+  public void upd(int l,int r,FT f){
     down(l,r);
     super.upd(l,r,f);
     up(l,r);
   }
 
   @Override
-  public V get(int i){ return get(i,i +1); }
+  public VT get(int i){ return get(i,i +1); }
 
   /**
    * 取得する前に遅延分を降ろす
    */
   @Override
-  public V get(int l,int r){
+  public VT get(int l,int r){
     down(l,r);
     return super.get(l,r);
   }

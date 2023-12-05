@@ -1,30 +1,33 @@
 package library.dataStructure.rangeData.segmentTree;
 
+import library.dataStructure.rangeData.base.BaseF;
+import library.dataStructure.rangeData.base.BaseV;
+
 /**
  * 区間作用1点取得のセグメント木
  * @author yuuki_n
  *
- * @param <V>
- * @param <F>
+ * @param <VT> 値の型
+ * @param <FT> 作用の型
  */
-abstract class DualSegmentTree<V, F> extends Seg<V, F>{
+abstract class DualSegmentTree<VT extends BaseV, FT extends BaseF> extends Seg<VT, FT>{
 
-  DualSegmentTree(int n){ super(n); }
+  public DualSegmentTree(int n){ super(n); }
 
   @Override
-  protected abstract F comp(F a,F b);
+  protected abstract FT comp(FT a,FT b);
 
   @Override
   protected void rangeMap(int i){}
 
   @Override
-  public void upd(int i,F f){ upd(i,i +1,f); }
+  public void upd(int i,FT f){ upd(i,i +1,f); }
 
   /**
    * 更新する前に遅延分を降ろす
    */
   @Override
-  public void upd(int l,int r,F f){
+  public void upd(int l,int r,FT f){
     down(l,r);
     super.upd(l,r,f);
   }
@@ -33,7 +36,7 @@ abstract class DualSegmentTree<V, F> extends Seg<V, F>{
    * 取得する前に遅延分を降ろす
    */
   @Override
-  public V get(int i){
+  public VT get(int i){
     down(i,i +1);
     return super.get(i);
   }

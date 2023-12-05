@@ -62,10 +62,6 @@ public class RollingHash{
       rev.upd(n -i -1,v);
   }
 
-  public static boolean equal(RollingHash rhS,int sl,int sr,RollingHash rhT,int tl,int tr){
-    return rhS.get(sl,sr) == rhT.get(tl,tr);
-  }
-
   private void upd(int i,long v){
     if (updatale)
       for (int x = i +1;x <= n;x += x &-x)

@@ -1,46 +1,51 @@
 package library.dataStructure.rangeData.segmentTree;
 
 import library.dataStructure.rangeData.RangeData;
+import library.dataStructure.rangeData.base.BaseF;
+import library.dataStructure.rangeData.base.BaseV;
 
 /**
  * セグメント木の抽象クラス
  * @author yuuki_n
  *
- * @param <V>
- * @param <F>
+ * @param <VT> 値の型
+ * @param <FT> 作用の型
  */
-public abstract class Seg<V, F> extends RangeData<V, F>{
-  protected int n,log;
-  private V[] val;
-  private F[] lazy;
-  private int[] l,r;
+abstract class Seg<VT extends BaseV, FT extends BaseF> extends RangeData<VT, FT>{
+  private int n,log;
+  private VT[] val;
+  private FT[] lazy;
 
   @SuppressWarnings("unchecked")
   Seg(int n){
     this.n = n;
     while (1 <<log <= n)
       log++;
-    val = (V[]) new Object[n <<1];
-    lazy = (F[]) new Object[n];
-    l = new int[n <<1];
-    r = new int[n <<1];
+    val = (VT[]) new BaseV[n <<1];
+    lazy = (FT[]) new BaseF[n];
 
-    for (int i = -1;++i < n;l[i +n] = i,r[i +n] = i +1)
-      val[i +n] = init(i);
-    for (int i = n;--i > 0;l[i] = l[i <<1],r[i] = r[i <<1 |1])
-      merge(i);
+    for (int i = -1;++i < n;) {
+      VT v = val[i +n] = init(i);
+      v.l = i;
+      v.r = i +1;
+    }
+    for (int i = n;--i > 0;merge(i)) {
+      VT v = val[i] = e();
+      v.l = val[i <<1].l;
+      v.r = val[i <<1 |1].r;
+    }
   }
 
   /**
-   * @return Vの単位元
+   * @return VTの単位元
    */
-  protected abstract V e();
+  protected abstract VT e();
 
   /**
    * @param i
    * @return i番目の初期値
    */
-  protected V init(int i){ return e(); }
+  protected VT init(int i){ return e(); }
 
   /**
    * @param v
@@ -49,24 +54,24 @@ public abstract class Seg<V, F> extends RangeData<V, F>{
    * @param r
    * @return [l,r)を集約した値vにfを作用させた値
    */
-  protected abstract V map(V v,F f,int l,int r);
+  protected abstract void map(VT v,FT f);
 
-  protected void rangeMap(int i){ val[i] = map(val[i],lazy[i],l[i],r[i]); }
-
-  /**
-   * @param a
-   * @param b
-   * @return aとbの集約
-   */
-  protected V agg(V a,V b){ return null; }
+  protected void rangeMap(int i){ map(val[i],lazy[i]); }
 
   /**
-   *
+   * xにaとbを集約した値を設定する
+   * @param x
    * @param a
    * @param b
-   * @return a,bの合成
    */
-  protected F comp(F a,F b){ return null; }
+  protected void agg(VT x,VT a,VT b){}
+
+  /**
+  * @param f
+  * @param g
+  * @return f,gの合成g(f(x))
+  */
+  protected FT comp(FT f,FT g){ return null; }
 
   /**
    * 遅延分があれば位置iのノードに作用させる
@@ -74,7 +79,7 @@ public abstract class Seg<V, F> extends RangeData<V, F>{
    * @param i
    * @return
    */
-  protected V eval(int i){
+  private VT eval(int i){
     if (i < n && lazy[i] != null) {
       rangeMap(i);
       prop(i <<1,lazy[i]);
@@ -88,18 +93,21 @@ public abstract class Seg<V, F> extends RangeData<V, F>{
    * 位置iのノードの値を子から計算する
    * @param i
    */
-  private void merge(int i){ val[i] = agg(eval(i <<1),eval(i <<1 |1)); }
+  private void merge(int i){
+    if (val[i].l < val[i].r)
+      agg(val[i],eval(i <<1),eval(i <<1 |1));
+  }
 
   /**
    * 位置iのノードにfの作用を置く
    * @param i
    * @param f
    */
-  protected void prop(int i,F f){
+  private void prop(int i,FT f){
     if (i < n)
       lazy[i] = lazy[i] == null ? f : comp(lazy[i],f);
     else
-      val[i] = map(val[i],f,l[i],r[i]);
+      map(val[i],f);
   }
 
   /**
@@ -135,10 +143,10 @@ public abstract class Seg<V, F> extends RangeData<V, F>{
   private int oddPart(int i){ return i /(i &-i); }
 
   @Override
-  public void upd(int i,F f){ prop(i +n,f); }
+  public void upd(int i,FT f){ prop(i +n,f); }
 
   @Override
-  public void upd(int l,int r,F f){
+  public void upd(int l,int r,FT f){
     l += n;
     r += n;
     do {
@@ -150,21 +158,28 @@ public abstract class Seg<V, F> extends RangeData<V, F>{
   }
 
   @Override
-  public V get(int i){ return val[i +n]; }
+  public VT get(int i){ return val[i +n]; }
 
   @Override
-  public V get(int l,int r){
+  public VT get(int l,int r){
     l += n;
     r += n;
-    V vl = e(),vr = e();
+    VT vl = e(),vr = e();
     while (l < r) {
-      vl = (l &1) == 0 ? vl : agg(vl,eval(l++));
-      vr = (r &1) == 0 ? vr : agg(eval(--r),vr);
+      if ((l &1) == 1)
+        vl = agg(vl,eval(l++));
+      if ((r &1) == 1)
+        vr = agg(eval(--r),vr);
       l >>= 1;
       r >>= 1;
     }
-
     return agg(vl,vr);
+  }
+
+  private VT agg(VT vl,VT vr){
+    var t = e();
+    agg(t,vl,vr);
+    return t;
   }
 
 }
