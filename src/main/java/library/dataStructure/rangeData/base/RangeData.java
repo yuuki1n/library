@@ -1,4 +1,4 @@
-package library.dataStructure.rangeData;
+package library.dataStructure.rangeData.base;
 
 /**
  *
@@ -10,7 +10,6 @@ package library.dataStructure.rangeData;
  * @param <F> 作用のデータ型
  */
 public abstract class RangeData<V, F> {
-
   /**
    * i番目の値にfを作用させる
    * @param i

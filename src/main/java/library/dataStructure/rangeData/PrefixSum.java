@@ -1,5 +1,7 @@
 package library.dataStructure.rangeData;
 
+import library.dataStructure.rangeData.base.RangeData;
+
 public abstract class PrefixSum extends RangeData<Long, Long>{
   long[] sum;
 

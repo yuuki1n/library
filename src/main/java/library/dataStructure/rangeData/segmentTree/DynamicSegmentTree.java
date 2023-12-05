@@ -2,11 +2,10 @@ package library.dataStructure.rangeData.segmentTree;
 
 import java.util.Stack;
 
-import library.dataStructure.rangeData.RangeData;
-import library.dataStructure.rangeData.base.BaseF;
 import library.dataStructure.rangeData.base.BaseV;
+import library.dataStructure.rangeData.base.RangeData;
 
-public abstract class DynamicSegmentTree<VT extends BaseV, FT extends BaseF> extends RangeData<VT, FT>{
+public abstract class DynamicSegmentTree<V extends BaseV, F> extends RangeData<V, F>{
   private Node root,nl;
 
   public DynamicSegmentTree(int log){
@@ -14,31 +13,34 @@ public abstract class DynamicSegmentTree<VT extends BaseV, FT extends BaseF> ext
     nl = new Node(null,0,0);
   }
 
-  protected abstract VT e();
-
-  protected abstract void agg(VT x,VT a,VT b);
-
-  protected abstract void map(VT v,FT f);
+  protected abstract V e();
+  protected abstract void agg(V x,V a,V b);
+  protected abstract void map(V v,F f);
 
   @Override
-  public void upd(int i,FT f){
+  public void upd(int i,F f){
     var nd = root;
     while (nd.l() +1 < nd.r())
       nd = i < nd.l() +nd.r() >>1 ? nd.lft() : nd.rht();
     map(nd.val,f);
     while (nd.p != null) {
       nd = nd.p;
-      int l = nd.l(),r = nd.r();
-      agg(nd.val,(nd.lft != null ? nd.lft : nl).val,(nd.rht != null ? nd.rht : nl).val);
-      nd.val.l = l;
-      nd.val.r = r;
+      if (nd.lft == null) {
+        nl.val.l = nd.l();
+        nl.val.r = nd.rht.l();
+        agg(nd.val,nl.val,nd.rht.val);
+      } else if (nd.rht == null) {
+        nl.val.l = nd.lft.r();
+        nl.val.r = nd.r();
+        agg(nd.val,nd.lft.val,nl.val);
+      } else
+        agg(nd.val,nd.lft.val,nd.rht.val);
     }
   }
 
   @Override
-  public VT get(int l,int r){
-    VT ret = e();
-    ret.l = ret.r = l;
+  public V get(int l,int r){
+    V ret = e();
     Stack<Node> stk = new Stack<>();
     stk.add(root);
     for (Node nd;!stk.isEmpty();)
@@ -55,9 +57,9 @@ public abstract class DynamicSegmentTree<VT extends BaseV, FT extends BaseF> ext
   }
 
   @Override
-  public VT get(int i){ return get(i,i +1); }
+  public V get(int i){ return get(i,i +1); }
 
-  private VT agg(VT vl,VT vr){
+  private V agg(V vl,V vr){
     var t = e();
     agg(t,vl,vr);
     return t;
@@ -65,7 +67,7 @@ public abstract class DynamicSegmentTree<VT extends BaseV, FT extends BaseF> ext
 
   private class Node{
     private Node p,lft,rht;
-    private VT val;
+    private V val;
 
     private Node(Node p,int l,int r){
       this.p = p;
