@@ -3,8 +3,6 @@ package library.string;
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 import library.util.Mod61;
 import library.util.Util;
 
@@ -46,10 +44,6 @@ public class RollingHash{
     upd(i,v);
     if (rev != null)
       rev.upd(n -i -1,v);
-  }
-
-  public static boolean equal(RollingHash rhS,int sl,int sr,RollingHash rhT,int tl,int tr){
-    return rhS.get(sl,sr) == rhT.get(tl,tr);
   }
 
   private void upd(int i,long v){
