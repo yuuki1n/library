@@ -14,15 +14,8 @@ import library.util.Util;
  *
  */
 public class RollingHash{
-  private static long m;
-  private static long[] pow;
-  static {
-    for (int k = 1;m < Util.infI;m = Mod61.pow(37,k))
-      while (!Mod61.isPrimeRoot(k))
-        k = ThreadLocalRandom.current().nextInt(Util.infI);
-    pow = new long[]{1};
-  }
-
+  private static long m = Mod61.base();
+  private static long[] pow = {1};
   int n;
   private long[] hash,S;
   private boolean updatale;
@@ -42,13 +35,6 @@ public class RollingHash{
       upd(i,S[i]);
   }
 
-  /**
-   * [l,r)部分のハッシュ値を返す
-   * l>rの時は(l,r]部分を逆順にしたもののハッシュ値を返す
-   * @param l
-   * @param r
-   * @return
-   */
   public long get(int l,int r){
     if (l > r)
       return (rev == null ? rev = rev() : rev).get(n -l,n -r);
@@ -60,6 +46,10 @@ public class RollingHash{
     upd(i,v);
     if (rev != null)
       rev.upd(n -i -1,v);
+  }
+
+  public static boolean equal(RollingHash rhS,int sl,int sr,RollingHash rhT,int tl,int tr){
+    return rhS.get(sl,sr) == rhT.get(tl,tr);
   }
 
   private void upd(int i,long v){
