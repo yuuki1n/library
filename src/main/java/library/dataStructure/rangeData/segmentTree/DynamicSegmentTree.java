@@ -23,9 +23,8 @@ public abstract class DynamicSegmentTree<V extends BaseV, F> extends RangeData<V
     while (nd.l() +1 < nd.r())
       nd = i < nd.l() +nd.r() >>1 ? nd.lft() : nd.rht();
     map(nd.val,f);
-    while (nd.p != null) {
-      nd = nd.p;
-      if (nd.lft == null) {
+    while (nd.p != null)
+      if ((nd = nd.p).lft == null) {
         nl.val.l = nd.l();
         nl.val.r = nd.rht.l();
         agg(nd.val,nl.val,nd.rht.val);
@@ -35,7 +34,6 @@ public abstract class DynamicSegmentTree<V extends BaseV, F> extends RangeData<V
         agg(nd.val,nd.lft.val,nl.val);
       } else
         agg(nd.val,nd.lft.val,nd.rht.val);
-    }
   }
 
   @Override
@@ -46,9 +44,11 @@ public abstract class DynamicSegmentTree<V extends BaseV, F> extends RangeData<V
     for (Node nd;!stk.isEmpty();)
       if ((nd = stk.pop()) == null || nd.r() <= l || r <= nd.l())
         continue;
-      else if (l <= nd.l() && nd.r() <= r)
-        ret = agg(ret,nd.val);
-      else {
+      else if (l <= nd.l() && nd.r() <= r) {
+        var t = e();
+        agg(t,ret,nd.val);
+        ret = t;
+      } else {
         stk.add(nd.rht);
         stk.add(nd.lft);
       }
@@ -58,12 +58,6 @@ public abstract class DynamicSegmentTree<V extends BaseV, F> extends RangeData<V
 
   @Override
   public V get(int i){ return get(i,i +1); }
-
-  private V agg(V vl,V vr){
-    var t = e();
-    agg(t,vl,vr);
-    return t;
-  }
 
   private class Node{
     private Node p,lft,rht;
