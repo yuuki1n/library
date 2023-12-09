@@ -1,5 +1,7 @@
 package library.util;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  *mod 1^61-1での計算をする
  * @author yuuki_n
@@ -36,11 +38,15 @@ public class Mod61{
     return ret;
   }
 
-  /**
-   * @param a
-   * @return aがMODの原始根かを判定する
-   */
-  public static boolean isPrimeRoot(long a){
+  public static long base(){
+    long m = 0;
+    for (int k = 1;m < Util.infI;m = pow(37,k))
+      while (!isPrimeRoot(k))
+        k = ThreadLocalRandom.current().nextInt(Util.infI);
+    return m;
+  }
+
+  private static boolean isPrimeRoot(long a){
     long b = MOD -1;
     while (0 < b) {
       long t = a;

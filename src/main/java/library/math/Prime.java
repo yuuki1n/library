@@ -1,89 +1,26 @@
 package library.math;
 
+import static java.lang.Math.*;
 import static java.util.Arrays.*;
-
-import java.math.BigInteger;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.IntStream;
 
 import library.util.Util;
 
 public class Prime{
-  private Random rd = ThreadLocalRandom.current();
-  private int[] spf;
-  private long[] AInt;
-  private BigInteger[] ALng;
+  private long[] spf,
+      arrI = {2, 7, 61},
+      arrL = {2, 325, 9375, 28178, 450775, 9780504, 1795265022};
 
-  Prime(){ this(10_000_000); }
+  public Prime(){ this(1_000_000); }
 
-  Prime(int n){
-    spf = Util.arrI(n +1,i -> i);
+  public Prime(int n){
+    spf = Util.arrL(n +1,i -> i);
     for (int p = 2;p *p <= n;p++)
       if (spf[p] == p)
         for (int l = p *p;l <= n;l += p)
           spf[l] = p;
-    AInt = new long[]{2, 7, 61};
-    ALng = IntStream.of(2,325,9375,28178,450775,9780504,1795265022)
-        .mapToObj(BigInteger::valueOf)
-        .toArray(l -> new BigInteger[l]);
   }
 
-  boolean isPrime(long n){
-    if (n < spf.length)
-      return 1 < n && spf[(int) n] == n;
-    if ((n &1) == 0)
-      return false;
-    long lsb = Long.lowestOneBit(n -1);
-    if (n < 1 <<30) {
-      long m = (n -1) /lsb;
-      a:for (var a:AInt) {
-        long z = pow(a,m,n);
-        if (z < 2)
-          continue;
-        for (long k = 1;k <= lsb;k <<= 1)
-          if (z == n -1)
-            continue a;
-          else
-            z = z *z %n;
-        return false;
-      }
-    } else {
-      BigInteger bn = BigInteger.valueOf(n),m = BigInteger.valueOf((n -1) /lsb);
-      a:for (var ba:ALng) {
-        var z = ba.modPow(m,bn);
-        if (z.longValue() < 2)
-          continue;
-        for (long k = 1;k <= lsb;k <<= 1)
-          if (z.longValue() == n -1)
-            continue a;
-          else
-            z = z.multiply(z).mod(bn);
-        return false;
-      }
-    }
-    return true;
-  }
-
-  long[] factorize(long n){
-    if (n < 2)
-      return new long[0];
-    long[] ret = new long[64];
-    int h = 0,t = 0;
-    ret[t++] = n;
-    while (h < t) {
-      long cur = ret[h++];
-      if (!isPrime(cur)) {
-        var p = rho(cur);
-        ret[--h] = p;
-        ret[t++] = cur /p;
-      }
-    }
-    sort(ret,0,t);
-    return copyOf(ret,t);
-  }
-
-  long[] divisors(long n){
+  public long[] divisors(long n){
     long[] fs = factorize(n);
     int l = 2,id = 0;
     for (int i = 1,sz = 1;i < fs.length;i++,l += sz)
@@ -104,38 +41,66 @@ public class Prime{
     return ret;
   }
 
+  public long[] factorize(long n){
+    if (n < 2)
+      return new long[0];
+    long[] ret = new long[64];
+    int h = 0,t = 0;
+    ret[t++] = n;
+    while (h < t) {
+      long cur = ret[h++];
+      if (!isPrime(cur)) {
+        var p = rho(cur);
+        ret[--h] = p;
+        ret[t++] = cur /p;
+      }
+    }
+    sort(ret,0,t);
+    return copyOf(ret,t);
+  }
+
+  public boolean isPrime(long n){
+    if (n < spf.length)
+      return 1 < n && spf[(int) n] == n;
+    if ((n &1) == 0)
+      return false;
+    ModInt bm = new ModInt(n);
+    long lsb = n -1 &-n +1;
+    long m = (n -1) /lsb;
+    a:for (var a:n < 1 <<30 ? arrI : arrL) {
+      long z = bm.pow(a %n,m);
+      if (z < 2)
+        continue;
+      for (long k = 1;k <= lsb;k <<= 1)
+        if (z == n -1)
+          continue a;
+        else
+          z = bm.mul(z,z);
+      return false;
+    }
+    return true;
+  }
+
   private long rho(long n){
     if (n < spf.length)
       return spf[(int) n];
-    if (n %2 == 0)
+    if ((n &1) == 0)
       return 2;
-    BigInteger bn = BigInteger.valueOf(n);
+    ModInt bm = new ModInt(n);
     for (long t;;) {
-      long x = 0,y = x,q = 1,c = rd.nextLong(n -1) +1;
+      long x = 0,y = x,q = 1,c = Util.rd.nextLong(n -1) +1;
       a:for (int k = 1;;k <<= 1,y = x,q = 1)
         for (int i = k;i-- > 0;) {
-          x = mul(x,x,bn) +c;
+          x = bm.mul(x,x) +c;
           if (n <= x)
             x -= n;
-          q = mul(q,Math.abs(x -y),bn);
+          q = bm.mul(q,abs(x -y));
           if ((i &127) == 0 && (t = gcd(q,n)) > 1)
             break a;
         }
       if (t < n)
         return t;
     }
-  }
-
-  public long mul(long a,long b,BigInteger bn){
-    return BigInteger.valueOf(a).multiply(BigInteger.valueOf(b)).mod(bn).longValue();
-  }
-
-  private long pow(long x,long n,long mod){
-    long ret = 1;
-    for (x %= mod;0 < n;x = x *x %mod,n >>= 1)
-      if ((n &1) == 1)
-        ret = ret *x %mod;
-    return ret;
   }
 
   private long gcd(long a,long b){
@@ -145,5 +110,42 @@ public class Prime{
       b = t %b;
     }
     return a;
+  }
+
+  class ModInt{
+    private long n,r2,ni;
+
+    public ModInt(long n){
+      this.n = n;
+      r2 = (1L <<62) %n;
+      for (int i = 0;i < 66;i++) {
+        r2 <<= 1;
+        if (r2 >= n)
+          r2 -= n;
+      }
+      ni = n;
+      for (int i = 0;i < 5;++i)
+        ni *= 2 -n *ni;
+    }
+
+    private static long high(long x,long y){ return multiplyHigh(x,y) +(x >>63 &y) +(y >>63 &x); }
+
+    private long mr(long x,long y){ return high(x,y) +high(-ni *x *y,n) +(x *y == 0 ? 0 : 1); }
+
+    public long mod(long x){ return x < n ? x : x -n; }
+
+    public long mul(long x,long y){ return mod(mr(mr(x,r2),y)); }
+
+    public long pow(long x,long y){
+      long z = mr(x,r2);
+      long r = 1;
+      while (y > 0) {
+        if ((y &1) == 1)
+          r = mr(r,z);
+        z = mr(z,z);
+        y >>= 1;
+      }
+      return mod(r);
+    }
   }
 }
