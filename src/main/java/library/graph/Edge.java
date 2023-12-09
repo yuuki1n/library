@@ -7,9 +7,7 @@ package library.graph;
  * @param <L> 辺に持つ値
  */
 public class Edge<L> {
-  public int id;
-  public int u;
-  public int v;
+  public int id,u,v;
   public L val;
   public Edge<L> re;
 

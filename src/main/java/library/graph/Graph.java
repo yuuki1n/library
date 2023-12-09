@@ -28,12 +28,6 @@ public class Graph<L> {
 
   public void addEdge(int u,int v){ addEdge(u,v,null); }
 
-  /**
-   * 値lを持ったu->v辺を追加する
-   * @param u
-   * @param v
-   * @param l
-   */
   public void addEdge(int u,int v,L l){
     var e = new Edge<>(es.size(),u,v,l);
     var re = new Edge<>(e.id,e.v,e.u,inv(e.val));
@@ -42,21 +36,9 @@ public class Graph<L> {
     bk[v].add(e.re = re);
   }
 
-  /**
-   * @param l
-   * @return 逆向きにした場合の値
-   */
   protected L inv(L l){ return l; }
 
-  /**
-   * @param u
-   * @return 頂点uから出る辺list
-   */
-  public List<Edge<L>> go(int u){ return go[u]; }
+  public List<Edge<L>> go(int ui){ return go[ui]; }
 
-  /**
-   * @param u
-   * @return 頂点uに入る辺list
-   */
-  public List<Edge<L>> back(int u){ return bk[u]; }
+  public List<Edge<L>> back(int ui){ return bk[ui]; }
 }
