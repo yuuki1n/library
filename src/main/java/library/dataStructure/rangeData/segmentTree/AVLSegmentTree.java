@@ -8,12 +8,15 @@ import library.dataStructure.rangeData.base.BaseV;
 import library.dataStructure.rangeData.base.RangeData;
 
 public abstract class AVLSegmentTree<V extends BaseV, F> extends RangeData<V, F>{
-  private V e = e();
+  private V e = e(),e1 = e();
   private Node nl = new Node(0);
 
-  public AVLSegmentTree(int n){ nl.cld(1,new Node(n)); }
+  public AVLSegmentTree(int n){
+    this();
+    nl.cld(1,new Node(n));
+  }
 
-  public AVLSegmentTree(){ this(0); }
+  public AVLSegmentTree(){ e1.sz = 1; }
 
   public void build(int n,IntFunction<V> init){ nl.cld(1,build(0,n,init)); }
 
@@ -34,7 +37,12 @@ public abstract class AVLSegmentTree<V extends BaseV, F> extends RangeData<V, F>
 
   public void ins(int i,V v){ ins(i,v,1); }
 
-  public void ins(int i,V v,int k){ ins(nl.rht,i,v,k); }
+  public void ins(int i,V v,int k){
+    if (nl.rht == null)
+      nl.cld(1,new Node(v,k));
+    else
+      ins(nl.rht,i,v,k);
+  }
 
   private void ins(Node nd,int i,V v,int k){
     if (nd.leaf && (i == 0 || i == nd.sz)) {
@@ -60,6 +68,29 @@ public abstract class AVLSegmentTree<V extends BaseV, F> extends RangeData<V, F>
     if (abs(nd.bis()) > 1)
       nd.par.cld(nd.par.lft == nd ? -1 : 1,nd = rotate(nd));
     nd.merge();
+  }
+
+  public V del(int i){ return i < size() ? del(nl.rht,i) : e; }
+
+  private V del(Node nd,int i){
+    if (nd.leaf) {
+      nd.sz--;
+      return nd.val;
+    }
+
+    nd.push();
+    var ret = i < nd.lft.sz ? del(nd.lft,i) : del(nd.rht,i -nd.lft.sz);
+
+    int c = nd.par.lft == nd ? -1 : 1;
+    if (nd.lft.sz == 0)
+      nd.par.cld(c,nd.rht);
+    else if (nd.rht.sz == 0)
+      nd.par.cld(c,nd.lft);
+
+    if (abs(nd.bis()) > 1)
+      nd.par.cld(c,nd = rotate(nd));
+    nd.merge();
+    return ret;
   }
 
   @Override
@@ -99,8 +130,11 @@ public abstract class AVLSegmentTree<V extends BaseV, F> extends RangeData<V, F>
   @Override
   public V get(int l,int r){
     V ret = e();
-    get(ret,nl.rht,l,r);
-    pow(ret,e,max(0,r -max(size(),l)));
+    if (nl.rht != null)
+      get(ret,nl.rht,l,r);
+    int max = max(0,r -max(size(),l));
+    if (0 < max)
+      pow(ret,e1,max);
     return ret;
   }
 
@@ -113,7 +147,6 @@ public abstract class AVLSegmentTree<V extends BaseV, F> extends RangeData<V, F>
     }
     if (nd.leaf) {
       pow(ret,nd.val,r -l);
-      ret.sz += r -l;
       return;
     }
 
@@ -122,9 +155,9 @@ public abstract class AVLSegmentTree<V extends BaseV, F> extends RangeData<V, F>
     get(ret,nd.rht,l -nd.lft.sz,r -nd.lft.sz);
   }
 
-  public V all(){ return nl.rht.val(); }
+  public V all(){ return nl.rht == null ? e : nl.rht.val(); }
 
-  public int size(){ return nl.rht.sz; }
+  public int size(){ return nl.rht == null ? 0 : nl.rht.sz; }
 
   protected abstract V e();
   protected abstract void agg(V v,V a,V b);
