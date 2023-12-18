@@ -25,13 +25,11 @@ abstract class Seg<V extends BaseV, F> extends RangeData<V, F>{
 
     for (int i = -1;++i < n;) {
       V v = val[i +n] = init(i);
-      v.l = i;
-      v.r = i +1;
+      v.sz = 1;
     }
     for (int i = n;--i > 0;merge(i)) {
       V v = val[i] = e();
-      v.l = val[i <<1].l;
-      v.r = val[i <<1 |1].r;
+      v.sz = val[i <<1].sz +val[i <<1 |1].sz;
     }
   }
 
@@ -48,7 +46,7 @@ abstract class Seg<V extends BaseV, F> extends RangeData<V, F>{
   protected F comp(F f,F g){ return null; }
 
   private V eval(int i){
-    if (i < n && lazy[i] != null) {
+    if (0 < i && i < n && lazy[i] != null) {
       rangeMap(i);
       prop(i <<1,lazy[i]);
       prop(i <<1 |1,lazy[i]);
@@ -57,10 +55,7 @@ abstract class Seg<V extends BaseV, F> extends RangeData<V, F>{
     return val[i];
   }
 
-  private void merge(int i){
-    if (val[i].l < val[i].r)
-      agg(val[i],eval(i <<1),eval(i <<1 |1));
-  }
+  private void merge(int i){ agg(val[i],eval(i <<1),eval(i <<1 |1)); }
 
   private void prop(int i,F f){
     if (i < n)
@@ -70,22 +65,17 @@ abstract class Seg<V extends BaseV, F> extends RangeData<V, F>{
   }
 
   protected void up(int l,int r){
-    l = oddPart(l +n);
-    r = oddPart(r +n);
+    for (l = oddPart(l +n),r = oddPart(r +n);l != r;)
+      merge(l > r ? (l >>= 1) : (r >>= 1));
     while (1 < l)
       merge(l >>= 1);
-    while (1 < r)
-      merge(r >>= 1);
   }
 
   protected void down(int l,int r){
-    l = oddPart(l +n);
-    r = oddPart(r +n);
-    for (int i = log;i > 0;i--) {
-      if (l >>i > 0)
-        eval(l >>i);
-      if (r >>i > 0)
-        eval(r >>i);
+    int i = log;
+    for (l = oddPart(l +n),r = oddPart(r +n);i > 0;i--) {
+      eval(l >>i);
+      eval(r >>i);
     }
   }
 
@@ -96,14 +86,12 @@ abstract class Seg<V extends BaseV, F> extends RangeData<V, F>{
 
   @Override
   public void upd(int l,int r,F f){
-    l += n;
-    r += n;
-    do {
+    for (l += n,r += n;l < r;l >>= 1,r >>= 1) {
       if ((l &1) == 1)
         prop(l++,f);
       if ((r &1) == 1)
         prop(--r,f);
-    } while ((l >>= 1) < (r >>= 1));
+    }
   }
 
   @Override
@@ -111,23 +99,20 @@ abstract class Seg<V extends BaseV, F> extends RangeData<V, F>{
 
   @Override
   public V get(int l,int r){
-    l += n;
-    r += n;
     V vl = e(),vr = e();
-    while (l < r) {
-      if ((l &1) == 1)
-        vl = agg(vl,eval(l++));
-      if ((r &1) == 1)
-        vr = agg(eval(--r),vr);
-      l >>= 1;
-      r >>= 1;
+    for (l += n,r += n;l < r;l >>= 1,r >>= 1) {
+      if ((l &1) == 1) {
+        var t = eval(l++);
+        agg(vl,vl,t);
+        vl.sz += t.sz;
+      }
+      if ((r &1) == 1) {
+        var t = eval(--r);
+        agg(vr,t,vr);
+        vr.sz += t.sz;
+      }
     }
-    return agg(vl,vr);
-  }
-
-  private V agg(V vl,V vr){
-    V t = e();
-    agg(t,vl,vr);
-    return t;
+    agg(vl,vl,vr);
+    return vl;
   }
 }

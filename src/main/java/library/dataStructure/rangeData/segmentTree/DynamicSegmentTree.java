@@ -20,17 +20,17 @@ public abstract class DynamicSegmentTree<V extends BaseV, F> extends RangeData<V
   @Override
   public void upd(int i,F f){
     var nd = root;
-    while (nd.l() +1 < nd.r())
-      nd = i < nd.l() +nd.r() >>1 ? nd.lft() : nd.rht();
+    while (nd.l +1 < nd.r)
+      nd = i < nd.l +nd.r >>1 ? nd.lft() : nd.rht();
     map(nd.val,f);
     while (nd.p != null)
       if ((nd = nd.p).lft == null) {
-        nl.val.l = nd.l();
-        nl.val.r = nd.rht.l();
+        nl.l = nd.l;
+        nl.r = nd.rht.l;
         agg(nd.val,nl.val,nd.rht.val);
       } else if (nd.rht == null) {
-        nl.val.l = nd.lft.r();
-        nl.val.r = nd.r();
+        nl.l = nd.lft.r;
+        nl.r = nd.r;
         agg(nd.val,nd.lft.val,nl.val);
       } else
         agg(nd.val,nd.lft.val,nd.rht.val);
@@ -42,9 +42,9 @@ public abstract class DynamicSegmentTree<V extends BaseV, F> extends RangeData<V
     Stack<Node> stk = new Stack<>();
     stk.add(root);
     for (Node nd;!stk.isEmpty();)
-      if ((nd = stk.pop()) == null || nd.r() <= l || r <= nd.l())
+      if ((nd = stk.pop()) == null || nd.r <= l || r <= nd.l)
         continue;
-      else if (l <= nd.l() && nd.r() <= r) {
+      else if (l <= nd.l && nd.r <= r) {
         var t = e();
         agg(t,ret,nd.val);
         ret = t;
@@ -62,20 +62,17 @@ public abstract class DynamicSegmentTree<V extends BaseV, F> extends RangeData<V
   private class Node{
     private Node p,lft,rht;
     private V val;
+    private int l,r;
 
     private Node(Node p,int l,int r){
       this.p = p;
+      this.l = l;
+      this.r = r;
       val = e();
-      val.l = l;
-      val.r = r;
     }
 
-    private int l(){ return val.l; }
+    private Node lft(){ return lft == null ? lft = new Node(this,l,l +r >>1) : lft; }
 
-    private int r(){ return val.r; }
-
-    private Node lft(){ return lft == null ? lft = new Node(this,l(),l() +r() >>1) : lft; }
-
-    private Node rht(){ return rht == null ? rht = new Node(this,l() +r() >>1,r()) : rht; }
+    private Node rht(){ return rht == null ? rht = new Node(this,l +r >>1,r) : rht; }
   }
 }
