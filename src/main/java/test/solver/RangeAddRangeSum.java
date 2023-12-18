@@ -4,6 +4,7 @@ import static java.lang.Math.*;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Random;
 
 import library.dataStructure.rangeData.base.BaseV;
 import library.dataStructure.rangeData.base.RangeData;
@@ -17,7 +18,8 @@ public class RangeAddRangeSum extends BaseSolver{
   public Object solve(){
     int seed = rd.nextInt();
     System.out.println(seed);
-    int N = 100000;
+    int N = 100;
+    rd = new Random(1);
     AVLSegmentTree<Data, Long> seg = avl(N);
     RangeData<Data, Long> seg2 = lazy(N);
 
@@ -36,10 +38,11 @@ public class RangeAddRangeSum extends BaseSolver{
         seg2.upd(i,j,x);
         //        assert seg.check();
       } else {
-        var a = seg.get(i,j).v;
-        var b = seg2.get(i,j).v;
+        var a = seg.get(i,j);
+        var b = seg2.get(i,j);
         //        assert seg.check();
-        assert a == b : cnt +"," +i +"," +j;
+        var d = max(j,seg.size()) -max(i,seg.size());
+        assert a.v == b.v && a.sz +d == b.sz : cnt +"," +i +"," +j;
       }
     }
 
@@ -93,6 +96,9 @@ public class RangeAddRangeSum extends BaseSolver{
 
       @Override
       protected void agg(Data v,Data a,Data b){ v.v = a.v +b.v; }
+
+      @Override
+      protected void pow(Data v,Data a,int n){ v.v += a.v *n; }
     };
     return seg;
   }

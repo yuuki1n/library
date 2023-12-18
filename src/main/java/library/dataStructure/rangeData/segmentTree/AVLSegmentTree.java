@@ -8,7 +8,7 @@ import library.dataStructure.rangeData.base.BaseV;
 import library.dataStructure.rangeData.base.RangeData;
 
 public abstract class AVLSegmentTree<V extends BaseV, F> extends RangeData<V, F>{
-  private V e = e(),e1 = e();
+  private V e = e();
   private Node nl = new Node(0);
 
   public AVLSegmentTree(int n){
@@ -16,7 +16,7 @@ public abstract class AVLSegmentTree<V extends BaseV, F> extends RangeData<V, F>
     nl.cld(1,new Node(n));
   }
 
-  public AVLSegmentTree(){ e1.sz = 1; }
+  public AVLSegmentTree(){}
 
   public void build(int n,IntFunction<V> init){ nl.cld(1,build(0,n,init)); }
 
@@ -132,9 +132,6 @@ public abstract class AVLSegmentTree<V extends BaseV, F> extends RangeData<V, F>
     V ret = e();
     if (nl.rht != null)
       get(ret,nl.rht,l,r);
-    int max = max(0,r -max(size(),l));
-    if (0 < max)
-      pow(ret,e1,max);
     return ret;
   }
 
@@ -146,7 +143,7 @@ public abstract class AVLSegmentTree<V extends BaseV, F> extends RangeData<V, F>
       return;
     }
     if (nd.leaf) {
-      pow(ret,nd.val,r -l);
+      ag(ret,ret,pw(nd.val,r -l));
       return;
     }
 
@@ -179,6 +176,13 @@ public abstract class AVLSegmentTree<V extends BaseV, F> extends RangeData<V, F>
       if (0 < n)
         ag(x,x,x);
     }
+  }
+
+  private V pw(V a,int n){
+    var ret = e();
+    pow(ret,a,n);
+    ret.sz = n;
+    return ret;
   }
 
   private void split(Node nd,int c){
@@ -234,15 +238,7 @@ public abstract class AVLSegmentTree<V extends BaseV, F> extends RangeData<V, F>
 
     private int bis(){ return bis = rht.rnk -lft.rnk; }
 
-    private V val(){
-      if (leaf && 1 < sz) {
-        var ret = e();
-        pow(ret,val,sz);
-        ret.sz = sz;
-        return ret;
-      }
-      return val;
-    }
+    private V val(){ return leaf && 1 < sz ? pw(val,sz) : val; }
 
     private void push(){
       if (laz != null) {

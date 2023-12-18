@@ -113,6 +113,7 @@ abstract class Seg<V extends BaseV, F> extends RangeData<V, F>{
       }
     }
     agg(vl,vl,vr);
+    vl.sz += vr.sz;
     return vl;
   }
 }

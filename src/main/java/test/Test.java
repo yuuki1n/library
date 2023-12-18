@@ -18,8 +18,8 @@ public class Test{
   static final long LMT = 3000;
 
   public static void main(final String[] args){
-    new RangeAddRangeSum(null,null,null).solve();
-    test(ABC327_F.class);
+    new RangeAddRangeSum(null,null,System.err).solve();
+    //    test(ABC327_F.class);
   }
 
   private static void test(Class<? extends BaseSolver> cls){
