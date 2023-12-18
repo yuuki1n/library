@@ -3,7 +3,8 @@ package library.string;
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
 
-import library.util.Mod61;
+import java.util.concurrent.ThreadLocalRandom;
+
 import library.util.Util;
 
 /**
@@ -12,7 +13,10 @@ import library.util.Util;
  *
  */
 public class RollingHash{
-  private static long m = Mod61.base();
+  private static long MASK30 = (1L <<30) -1;
+  private static long MASK31 = (1L <<31) -1;
+  private static long MOD = (1L <<61) -1;
+  private static long m = base();
   private static long[] pow = {1};
   int n;
   private long[] hash,S;
@@ -30,28 +34,32 @@ public class RollingHash{
     hash = new long[n +1];
     setPow(n);
     for (int i = 0;i < n;i++)
-      upd(i,S[i]);
+      set(i,S[i]);
   }
 
   public long get(int l,int r){
     if (l > r)
       return (rev == null ? rev = rev() : rev).get(n -l,n -r);
-    return Mod61.mod(hash(r) -Mod61.mul(hash(l),pow[r -l]));
+    return mod(hash(r) -mul(hash(l),pow[r -l]));
   }
 
-  public void set(int i,long v){
+  public void upd(int i,long v){
     assert updatale;
-    upd(i,v);
+    set(i,v);
     if (rev != null)
-      rev.upd(n -i -1,v);
+      rev.set(n -i -1,v);
   }
 
-  private void upd(int i,long v){
+  public static boolean equal(RollingHash rhS,int sl,int sr,RollingHash rhT,int tl,int tr){
+    return rhS.get(sl,sr) == rhT.get(tl,tr);
+  }
+
+  private void set(int i,long v){
     if (updatale)
       for (int x = i +1;x <= n;x += x &-x)
-        hash[x] = Mod61.mod(hash[x] +Mod61.mul(v -S[i],pow[x -i -1]));
+        hash[x] = mod(hash[x] +mul(v -S[i],pow[x -i -1]));
     else
-      hash[i +1] = Mod61.mod(Mod61.mul(hash[i],m) +v);
+      hash[i +1] = mod(mul(hash[i],m) +v);
     S[i] = v;
   }
 
@@ -59,7 +67,7 @@ public class RollingHash{
     long ret = 0;
     if (updatale)
       for (int x = i;x > 0;x -= x &-x)
-        ret = Mod61.mod(ret +Mod61.mul(hash[x],pow[i -x]));
+        ret = mod(ret +mul(hash[x],pow[i -x]));
     else
       ret = hash[i];
     return ret;
@@ -71,7 +79,7 @@ public class RollingHash{
     int s = pow.length;
     pow = copyOf(pow,max(pow.length <<1,n +1));
     for (int i = s;i < pow.length;i++)
-      pow[i] = Mod61.mul(pow[i -1],m);
+      pow[i] = mul(pow[i -1],m);
   }
 
   private RollingHash rev(){
@@ -79,5 +87,49 @@ public class RollingHash{
     for (int i = 0;i < n;i++)
       s[i] = S[n -1 -i];
     return new RollingHash(s,updatale);
+  }
+
+  private static long mul(long a,long b){
+    long lu = a >>31;
+    long ld = a &MASK31;
+    long ru = b >>31;
+    long rd = b &MASK31;
+    long mid = ld *ru +lu *rd;
+    return mod((lu *ru <<1) +ld *rd +((mid &MASK30) <<31) +(mid >>30));
+  }
+
+  private static long mod(long val){
+    while (val < 0)
+      val += MOD;
+    val = (val &MOD) +(val >>61);
+    return val > MOD ? val -MOD : val;
+  }
+
+  private static long pow(long x,long n){
+    long ret = 1;
+    do {
+      if ((n &1) == 1)
+        ret = mul(ret,x);
+      x = mul(x,x);
+    } while (0 < (n >>= 1));
+    return ret;
+  }
+
+  private static long base(){
+    long m = 0;
+    for (int k = 1;m < Util.infI;m = pow(37,k))
+      while (!isPrimeRoot(k))
+        k = ThreadLocalRandom.current().nextInt(Util.infI);
+    return m;
+  }
+
+  private static boolean isPrimeRoot(long a){
+    long b = MOD -1;
+    while (0 < b) {
+      long t = a;
+      a = b;
+      b = t %b;
+    }
+    return a > 1;
   }
 }
