@@ -13,9 +13,6 @@ public abstract class DualSegmentTree<V extends BaseV, F> extends Seg<V, F>{
   public DualSegmentTree(int n){ super(n); }
 
   @Override
-  protected void rangeMap(int i){}
-
-  @Override
   protected abstract F comp(F f,F g);
 
   @Override
