@@ -5,6 +5,7 @@ import java.util.Stack;
 import library.dataStructure.rangeData.base.BaseV;
 import library.dataStructure.rangeData.base.RangeData;
 
+@Deprecated
 public abstract class DynamicSegmentTree<V extends BaseV, F> extends RangeData<V, F>{
   private Node root,nl;
 
