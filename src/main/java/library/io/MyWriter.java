@@ -72,7 +72,7 @@ public class MyWriter{
 
   public void println(Object obj){
     if (obj == null)
-      return;
+      obj = "null";
     if (obj instanceof Iterable<?> co)
       for (Object e:co)
         println(e);

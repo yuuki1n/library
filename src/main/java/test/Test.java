@@ -10,16 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import test.solver.ABC327_F;
-import test.solver.BaseSolver;
-import test.solver.RangeAddRangeSum;
+import test.solver.*;
 
 public class Test{
   static final long LMT = 3000;
 
   public static void main(final String[] args){
-    new RangeAddRangeSum(null,null,System.err).solve();
-    //    test(ABC327_F.class);
+    //    new LazySeg(System.in,null,System.err).solve();
+    //    new RangeAddRangeSum(null,null,System.err).solve();
+    test(ABC332_F.class);
   }
 
   private static void test(Class<? extends BaseSolver> cls){

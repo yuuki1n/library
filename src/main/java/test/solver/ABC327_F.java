@@ -10,18 +10,19 @@ import java.util.List;
 
 import library.dataStructure.rangeData.base.BaseV;
 import library.dataStructure.rangeData.segmentTree.AVLSegmentTree;
+import library.dataStructure.rangeData.segmentTree.LazySegmentTree;
 
 public class ABC327_F extends BaseSolver{
   public ABC327_F(InputStream in,OutputStream out,OutputStream log){ super(in,out,log); }
 
   @Override
-  Object solve(){
+  public Object solve(){
     int N = in.it();
     int D = in.it();
     int W = in.it();
     int[][] S = in.it(N,2);
 
-    var seg = new AVLSegmentTree<Data, Integer>(){
+    var seg = new LazySegmentTree<Data, Integer>(1 <<18){
       @Override
       protected Data e(){ return new Data(0); }
 
@@ -33,9 +34,6 @@ public class ABC327_F extends BaseSolver{
 
       @Override
       protected Integer comp(Integer f,Integer g){ return f +g; }
-
-      @Override
-      protected void pow(Data v,Data a,int n){ v.v = max(v.v,a.v); }
     };
 
     List<int[]> events = new ArrayList<>();
@@ -46,9 +44,9 @@ public class ABC327_F extends BaseSolver{
     events.sort(Comparator.comparing(t -> t[0] *4 +t[2]));
     long ans = 0;
     for (var s:events) {
-      seg.upd(s[1],s[1] +W,s[2]);
+      seg.upd(s[1],min(s[1] +W,1 <<18),s[2]);
       if (0 < s[2])
-        ans = max(ans,seg.all().v);
+        ans = max(ans,seg.get(0,1 <<18).v);
     }
 
     return ans;

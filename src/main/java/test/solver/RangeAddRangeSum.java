@@ -18,7 +18,7 @@ public class RangeAddRangeSum extends BaseSolver{
   public Object solve(){
     int seed = rd.nextInt();
     System.out.println(seed);
-    int N = 100;
+    int N = 100000;
     rd = new Random(1);
     AVLSegmentTree<Data, Long> seg = avl(N);
     RangeData<Data, Long> seg2 = lazy(N);
@@ -33,7 +33,7 @@ public class RangeAddRangeSum extends BaseSolver{
       } while (i >= j);
       long x = rd.nextInt(10) +1;
       if (rd.nextBoolean()) {
-        //        log.println(i +"\t" +j +"\t" +x);
+        log.println(i +"\t" +j +"\t" +x);
         seg.upd(i,j,x);
         seg2.upd(i,j,x);
         //        assert seg.check();
@@ -98,7 +98,7 @@ public class RangeAddRangeSum extends BaseSolver{
       protected void agg(Data v,Data a,Data b){ v.v = a.v +b.v; }
 
       @Override
-      protected void pow(Data v,Data a,int n){ v.v += a.v *n; }
+      protected void pow(Data v,Data a,int n){ v.v = a.v *n; }
     };
     return seg;
   }
