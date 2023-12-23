@@ -11,8 +11,12 @@ public class MyWriter{
   private OutputStream out;
   private byte[] buf = new byte[1 <<16],ibuf = new byte[20];
   private int tail;
+  private boolean autoflush;
 
-  public MyWriter(OutputStream out){ this.out = out; }
+  public MyWriter(OutputStream out,boolean autoflush){
+    this.out = out;
+    this.autoflush = autoflush;
+  }
 
   public void flush(){
     try {
@@ -23,7 +27,11 @@ public class MyWriter{
     }
   }
 
-  protected void ln(){ write((byte) '\n'); }
+  private void ln(){
+    write((byte) '\n');
+    if (autoflush)
+      flush();
+  }
 
   private void write(byte b){
     buf[tail++] = b;
