@@ -31,17 +31,8 @@ public class Util{
 
   public Util(InputStream in,OutputStream out,OutputStream log){
     this.in = new MyReader(in);
-    this.out = new MyWriter(out);
-    this.log = new MyWriter(log){
-      @Override
-      public void println(Object obj){ super.println(obj == null ? "null" : obj); }
-
-      @Override
-      protected void ln(){
-        super.ln();
-        flush();
-      }
-    };
+    this.out = new MyWriter(out,false);
+    this.log = new MyWriter(log,true);
   }
 
   protected long elapsed(){ return System.currentTimeMillis() -st; }

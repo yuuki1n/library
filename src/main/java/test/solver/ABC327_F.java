@@ -10,7 +10,6 @@ import java.util.List;
 
 import library.dataStructure.rangeData.base.BaseV;
 import library.dataStructure.rangeData.segmentTree.AVLSegmentTree;
-import library.dataStructure.rangeData.segmentTree.LazySegmentTree;
 
 public class ABC327_F extends BaseSolver{
   public ABC327_F(InputStream in,OutputStream out,OutputStream log){ super(in,out,log); }
@@ -22,7 +21,7 @@ public class ABC327_F extends BaseSolver{
     int W = in.it();
     int[][] S = in.it(N,2);
 
-    var seg = new LazySegmentTree<Data, Integer>(1 <<18){
+    var seg = new AVLSegmentTree<Data, Integer>(){
       @Override
       protected Data e(){ return new Data(0); }
 
@@ -51,10 +50,10 @@ public class ABC327_F extends BaseSolver{
 
     return ans;
   }
-}
 
-class Data extends BaseV{
-  long v;
+  class Data extends BaseV{
+    long v;
 
-  public Data(long v){ this.v = v; }
+    public Data(long v){ this.v = v; }
+  }
 }

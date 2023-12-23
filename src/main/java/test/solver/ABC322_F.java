@@ -4,13 +4,9 @@ import static java.lang.Math.*;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 import library.dataStructure.rangeData.base.BaseV;
 import library.dataStructure.rangeData.segmentTree.AVLSegmentTree;
-import library.dataStructure.rangeData.segmentTree.LazySegmentTree;
 
 public class ABC322_F extends BaseSolver{
   public ABC322_F(InputStream in,OutputStream out,OutputStream log){ super(in,out,log); }

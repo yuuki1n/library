@@ -5,11 +5,9 @@ import static java.util.Arrays.*;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Comparator;
 
 import library.dataStructure.rangeData.base.BaseV;
 import library.dataStructure.rangeData.segmentTree.AVLSegmentTree;
-import library.dataStructure.rangeData.segmentTree.DualSegmentTree;
 
 public class ABC332_F extends BaseSolver{
   public ABC332_F(InputStream in,OutputStream out,OutputStream log){ super(in,out,log); }

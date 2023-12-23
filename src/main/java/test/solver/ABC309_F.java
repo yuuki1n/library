@@ -16,43 +16,36 @@ public class ABC309_F extends BaseSolver{
   @Override
   public Object solve(){
     int N = in.it();
-    int Q = in.it();
-    long[] A = in.lg(N);
+    int[][] T = in.it(N,3);
+    for (var t:T)
+      sort(t);
 
-    var seg = new AVLSegmentTree<Data, long[]>(){
+    var seg = new AVLSegmentTree<Data, Long>(){
       @Override
-      protected long[] comp(long[] f,long[] g){ return new long[]{f[0] *g[0] %mod, (f[1] *g[0] +g[1]) %mod}; }
-
-      @Override
-      protected Data e(){ return new Data(0); }
+      protected void agg(Data v,Data a,Data b){ v.v = min(a.v,b.v); }
 
       @Override
-      protected void map(Data v,long[] f){ v.v = (v.v *f[0] +f[1]) %mod; }
+      protected Data e(){ return new Data(infI); }
 
       @Override
-      protected void agg(Data v,Data a,Data b){ v.v = b.v; }
+      protected void map(Data v,Long f){ v.v = min(v.v,f); }
+
+      @Override
+      protected void pow(Data v,Data a,int n){ v.v = min(v.v,a.v); }
+
+      @Override
+      protected Long comp(Long f,Long g){ return g; }
     };
 
-    seg.build(N,i -> new Data(A[i] %mod));
-
-    long[] ans = new long[N];
-
-    while (Q-- > 0) {
-      int l = in.idx();
-      int r = in.it();
-
-      long inv = inv(r -l,mod);
-
-      long a = (r -l -1) *inv %mod;
-
-      long x = in.lg();
-      long b = x *inv %mod;
-      seg.upd(l,r,new long[]{a, b});
+    sort(T,Comparator.comparing(t -> 1L *infI *t[0] -t[1]));
+    for (var t:T) {
+      long v = seg.get(0,t[1]).v;
+      if (v < t[2])
+        return true;
+      seg.upd(t[1],t[1] +1,1L *t[2]);
     }
 
-    for (int i = 0;i < N;i++)
-      ans[i] = seg.get(i).v;
-    return ans;
+    return false;
   }
 
   class Data extends BaseV{
