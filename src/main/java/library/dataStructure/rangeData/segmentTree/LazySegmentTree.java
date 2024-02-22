@@ -1,6 +1,6 @@
 package library.dataStructure.rangeData.segmentTree;
 
-import library.dataStructure.rangeData.base.BaseV;
+import library.dataStructure.rangeData.base.*;
 
 /**
  * 区間作用区間取得のセグメント木
@@ -11,11 +11,6 @@ import library.dataStructure.rangeData.base.BaseV;
  */
 public abstract class LazySegmentTree<V extends BaseV, F> extends Seg<V, F>{
   public LazySegmentTree(int n){ super(n); }
-
-  @Override
-  protected abstract void agg(V v,V a,V b);
-  @Override
-  protected abstract F comp(F f,F g);
 
   @Override
   public void upd(int i,F f){ upd(i,i +1,f); }
@@ -31,8 +26,8 @@ public abstract class LazySegmentTree<V extends BaseV, F> extends Seg<V, F>{
   public V get(int i){ return get(i,i +1); }
 
   @Override
-  public V get(int l,int r){
+  public V[] getList(int l,int r){
     down(l,r);
-    return super.get(l,r);
+    return super.getList(l,r);
   }
 }

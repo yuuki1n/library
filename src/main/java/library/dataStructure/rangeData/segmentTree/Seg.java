@@ -1,7 +1,9 @@
 package library.dataStructure.rangeData.segmentTree;
 
-import library.dataStructure.rangeData.base.BaseV;
-import library.dataStructure.rangeData.base.RangeData;
+import java.lang.reflect.*;
+
+import library.dataStructure.rangeData.base.*;
+import library.util.*;
 
 /**
  * セグメント木の抽象クラス
@@ -10,18 +12,17 @@ import library.dataStructure.rangeData.base.RangeData;
  * @param <V> 値の型
  * @param <F> 作用の型
  */
-public abstract class Seg<V extends BaseV, F> extends RangeData<V, F>{
+public abstract class Seg<V extends BaseV, F> {
   private int n,log;
   private V[] val;
   private F[] lazy;
 
-  @SuppressWarnings("unchecked")
   protected Seg(int n){
     this.n = n;
     while (1 <<log <= n)
       log++;
-    val = (V[]) new BaseV[n <<1];
-    lazy = (F[]) new Object[n];
+    val = Util.cast(new BaseV[n <<1]);
+    lazy = Util.cast(new Object[n]);
 
     for (int i = -1;++i < n;)
       (val[i +n] = init(i)).sz = 1;
@@ -29,10 +30,8 @@ public abstract class Seg<V extends BaseV, F> extends RangeData<V, F>{
       (val[i] = e()).sz = val[i <<1].sz +val[i <<1 |1].sz;
   }
 
-  @Override
   public void upd(int i,F f){ prop(i +n,f); }
 
-  @Override
   public void upd(int l,int r,F f){
     for (l += n,r += n;l < r;l >>= 1,r >>= 1) {
       if ((l &1) == 1)
@@ -42,36 +41,38 @@ public abstract class Seg<V extends BaseV, F> extends RangeData<V, F>{
     }
   }
 
-  @Override
   public V get(int i){ return val[i +n]; }
 
-  @Override
   public V get(int l,int r){
-    V vl = e(),vr = e();
-    for (l += n,r += n;l < r;l >>= 1,r >>= 1) {
-      if ((l &1) == 1)
-        ag(vl,vl,val[l++]);
-      if ((r &1) == 1)
-        ag(vr,val[--r],vr);
+    V[] ret = Util.cast(new BaseV[]{e(), e()});
+    int i = 0;
+    for (var v:getList(l,r)) {
+      agg(ret[i],ret[i ^1],v);
+      ret[i].sz = ret[i ^= 1].sz +v.sz;
     }
-    ag(vl,vl,vr);
-    return vl;
+    return ret[i ^1];
   }
 
-  protected abstract V e();
+  public V[] getList(int l,int r){
+    int sz = 0;
+    for (int li = l += n,ri = r += n;li < ri;li = li +1 >>1,ri >>= 1)
+      sz += (li &1) +(ri &1);
+    V[] arr = Util.cast(Array.newInstance(e().getClass(),sz));
+    for (int i = 0;l < r;l >>= 1,r >>= 1) {
+      if ((l &1) > 0)
+        arr[i++] = val[l++];
+      if ((r &1) > 0)
+        arr[--sz] = val[--r];
+    }
+    return arr;
+  }
 
   protected V init(int i){ return e(); }
 
-  protected void agg(V v,V a,V b){}
-
-  private void ag(V v,V a,V b){
-    agg(v,a,b);
-    v.sz = a.sz +b.sz;
-  }
-
+  protected abstract V e();
+  protected abstract void agg(V v,V a,V b);
   protected abstract void map(V v,F f);
-
-  protected F comp(F f,F g){ return null; }
+  protected abstract F comp(F f,F g);
 
   protected void up(int l,int r){
     for (l = oddPart(l +n),r = oddPart(r +n);l != r;)
@@ -100,8 +101,13 @@ public abstract class Seg<V extends BaseV, F> extends RangeData<V, F>{
 
   private void prop(int i,F f){
     map(val[i],f);
-    if (i < n)
+    if (i < n) {
       lazy[i] = lazy[i] == null ? f : comp(lazy[i],f);
+      if (val[i].fail) {
+        push(i);
+        merge(i);
+      }
+    }
   }
 
   private int oddPart(int i){ return i /(i &-i); }

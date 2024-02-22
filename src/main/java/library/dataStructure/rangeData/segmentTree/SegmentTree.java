@@ -1,6 +1,6 @@
 package library.dataStructure.rangeData.segmentTree;
 
-import library.dataStructure.rangeData.base.BaseV;
+import library.dataStructure.rangeData.base.*;
 
 /**
  * 1点作用区間取得のセグメント木
@@ -13,7 +13,7 @@ public abstract class SegmentTree<V extends BaseV, F> extends Seg<V, F>{
   public SegmentTree(int n){ super(n); }
 
   @Override
-  protected abstract void agg(V v,V a,V b);
+  protected F comp(F f,F g){ return null; }
 
   @Override
   public void upd(int i,F f){

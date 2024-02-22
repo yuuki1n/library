@@ -1,12 +1,10 @@
 package library.dataStructure.rangeData.segmentTree;
 
-import java.util.Stack;
-
-import library.dataStructure.rangeData.base.BaseV;
-import library.dataStructure.rangeData.base.RangeData;
+import library.dataStructure.collection.*;
+import library.dataStructure.rangeData.base.*;
 
 @Deprecated
-public abstract class DynamicSegmentTree<V extends BaseV, F> extends RangeData<V, F>{
+public abstract class DynamicSegmentTree<V extends BaseV, F> {
   private Node root,nl;
 
   public DynamicSegmentTree(int log){
@@ -18,7 +16,6 @@ public abstract class DynamicSegmentTree<V extends BaseV, F> extends RangeData<V
   protected abstract void agg(V x,V a,V b);
   protected abstract void map(V v,F f);
 
-  @Override
   public void upd(int i,F f){
     var nd = root;
     while (nd.l +1 < nd.r)
@@ -37,10 +34,9 @@ public abstract class DynamicSegmentTree<V extends BaseV, F> extends RangeData<V
         agg(nd.val,nd.lft.val,nd.rht.val);
   }
 
-  @Override
   public V get(int l,int r){
     V ret = e();
-    Stack<Node> stk = new Stack<>();
+    MyStack<Node> stk = new MyStack<>();
     stk.add(root);
     for (Node nd;!stk.isEmpty();)
       if ((nd = stk.pop()) == null || nd.r <= l || r <= nd.l)
@@ -57,7 +53,6 @@ public abstract class DynamicSegmentTree<V extends BaseV, F> extends RangeData<V
     return ret;
   }
 
-  @Override
   public V get(int i){ return get(i,i +1); }
 
   private class Node{
