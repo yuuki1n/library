@@ -1,15 +1,11 @@
-package test.solver;
+package test.tester;
 
-import static java.lang.Math.*;
-import static java.util.Arrays.*;
+import java.io.*;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import library.dataStructure.rangeData.base.*;
+import library.dataStructure.rangeData.segmentTree.*;
 
-import library.dataStructure.rangeData.base.BaseV;
-import library.dataStructure.rangeData.segmentTree.AVLSegmentTree;
-
-public class ABC332_F extends BaseSolver{
+public class ABC332_F extends BaseTester{
   public ABC332_F(InputStream in,OutputStream out,OutputStream log){ super(in,out,log); }
 
   @Override
@@ -36,6 +32,9 @@ public class ABC332_F extends BaseSolver{
 
       @Override
       protected void agg(Data v,Data a,Data b){ v.v = b.v; }
+
+      @Override
+      protected void tog(Data v){}
     };
 
     seg.build(N,i -> new Data(A[i] %mod));

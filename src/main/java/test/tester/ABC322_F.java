@@ -1,14 +1,13 @@
-package test.solver;
+package test.tester;
 
 import static java.lang.Math.*;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
-import library.dataStructure.rangeData.base.BaseV;
-import library.dataStructure.rangeData.segmentTree.AVLSegmentTree;
+import library.dataStructure.rangeData.base.*;
+import library.dataStructure.rangeData.segmentTree.*;
 
-public class ABC322_F extends BaseSolver{
+public class ABC322_F extends BaseTester{
   public ABC322_F(InputStream in,OutputStream out,OutputStream log){ super(in,out,log); }
 
   @Override
@@ -64,6 +63,9 @@ public class ABC322_F extends BaseSolver{
 
       @Override
       protected Integer comp(Integer f,Integer g){ return f ^g; }
+
+      @Override
+      protected void tog(Data v){}
     };
 
     seg.build(N,i -> S[i] == '0' ? new Data(1,1,1,0,0,0) : new Data(0,0,0,1,1,1));

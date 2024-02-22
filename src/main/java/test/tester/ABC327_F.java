@@ -1,17 +1,14 @@
-package test.solver;
+package test.tester;
 
 import static java.lang.Math.*;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
-import library.dataStructure.rangeData.base.BaseV;
-import library.dataStructure.rangeData.segmentTree.AVLSegmentTree;
+import library.dataStructure.rangeData.base.*;
+import library.dataStructure.rangeData.segmentTree.*;
 
-public class ABC327_F extends BaseSolver{
+public class ABC327_F extends BaseTester{
   public ABC327_F(InputStream in,OutputStream out,OutputStream log){ super(in,out,log); }
 
   @Override
@@ -33,6 +30,9 @@ public class ABC327_F extends BaseSolver{
 
       @Override
       protected Integer comp(Integer f,Integer g){ return f +g; }
+
+      @Override
+      protected void tog(Data v){}
     };
 
     List<int[]> events = new ArrayList<>();

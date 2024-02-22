@@ -1,19 +1,11 @@
-package test.solver;
+package test.tester;
 
-import static java.lang.Math.*;
+import java.io.*;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Random;
-import java.util.Scanner;
+import library.dataStructure.rangeData.base.*;
+import library.dataStructure.rangeData.segmentTree.*;
 
-import library.dataStructure.rangeData.base.BaseV;
-import library.dataStructure.rangeData.base.RangeData;
-import library.dataStructure.rangeData.segmentTree.AVLSegmentTree;
-import library.dataStructure.rangeData.segmentTree.LazySegmentTree;
-import library.io.MyReader;
-
-public class RangeReverseRangeSum extends BaseSolver{
+public class RangeReverseRangeSum extends BaseTester{
   public RangeReverseRangeSum(InputStream in,OutputStream out,OutputStream log){ super(in,out,log); }
 
   @Override
@@ -36,6 +28,9 @@ public class RangeReverseRangeSum extends BaseSolver{
 
       @Override
       protected void pow(Data v,Data a,int n){ v.v = a.v *n; }
+
+      @Override
+      protected void tog(Data v){}
     };
 
     seg.build(N,i -> new Data(A[i]));
@@ -55,7 +50,7 @@ public class RangeReverseRangeSum extends BaseSolver{
     return null;
   }
 
-  <T> void log(RangeData<T, ?> seg,int n){
+  <T extends BaseV> void log(LazySegmentTree<T, ?> seg,int n){
     T[] a = (T[]) new BaseV[n];
     for (int i = 0;i < n;i++)
       a[i] = seg.get(i);

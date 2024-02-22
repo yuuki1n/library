@@ -1,16 +1,15 @@
-package test.solver;
+package test.tester;
 
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Comparator;
+import java.io.*;
+import java.util.*;
 
-import library.dataStructure.rangeData.base.BaseV;
-import library.dataStructure.rangeData.segmentTree.AVLSegmentTree;
+import library.dataStructure.rangeData.base.*;
+import library.dataStructure.rangeData.segmentTree.*;
 
-public class ABC309_F extends BaseSolver{
+public class ABC309_F extends BaseTester{
   public ABC309_F(InputStream in,OutputStream out,OutputStream log){ super(in,out,log); }
 
   @Override
@@ -35,6 +34,9 @@ public class ABC309_F extends BaseSolver{
 
       @Override
       protected Long comp(Long f,Long g){ return g; }
+
+      @Override
+      protected void tog(Data v){}
     };
 
     sort(T,Comparator.comparing(t -> 1L *infI *t[0] -t[1]));

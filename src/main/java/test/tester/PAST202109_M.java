@@ -1,4 +1,4 @@
-package test.solver;
+package test.tester;
 
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
@@ -11,7 +11,7 @@ import java.util.Scanner;
 import library.graph.unionfind.RelationalUnionFind;
 import library.io.MyReader;
 
-public class PAST202109_M extends BaseSolver{
+public class PAST202109_M extends BaseTester{
   public PAST202109_M(InputStream in,OutputStream out,OutputStream log){ super(in,out,log); }
 
   @Override
