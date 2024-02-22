@@ -8,6 +8,8 @@ import java.util.*;
 import library.dataStructure.rangeData.base.*;
 import library.dataStructure.rangeData.segmentTree.*;
 import library.io.*;
+import test.*;
+import test.base.*;
 
 public class ABC292_Ex extends BaseTester{
   public ABC292_Ex(InputStream in,OutputStream out,OutputStream log){ super(in,out,log); }

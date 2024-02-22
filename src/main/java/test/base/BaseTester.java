@@ -1,4 +1,4 @@
-package test.tester;
+package test.base;
 
 import static java.lang.Math.*;
 

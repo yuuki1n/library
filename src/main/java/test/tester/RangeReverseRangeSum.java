@@ -4,6 +4,7 @@ import java.io.*;
 
 import library.dataStructure.rangeData.base.*;
 import library.dataStructure.rangeData.segmentTree.*;
+import test.base.*;
 
 public class RangeReverseRangeSum extends BaseTester{
   public RangeReverseRangeSum(InputStream in,OutputStream out,OutputStream log){ super(in,out,log); }

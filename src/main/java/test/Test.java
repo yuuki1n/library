@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 import library.io.MyReader;
+import test.base.*;
 import test.tester.*;
 
 public class Test{

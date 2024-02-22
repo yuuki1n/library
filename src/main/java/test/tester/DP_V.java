@@ -4,6 +4,7 @@ import java.io.*;
 
 import library.graph.*;
 import library.graph.tree.*;
+import test.base.*;
 
 public class DP_V extends BaseTester{
   public DP_V(InputStream in,OutputStream out,OutputStream log){ super(in,out,log); }

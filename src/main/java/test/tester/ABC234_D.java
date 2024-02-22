@@ -9,6 +9,8 @@ import java.util.Comparator;
 
 import library.dataStructure.AVLTree;
 import library.dataStructure.rangeData.base.BaseV;
+import test.*;
+import test.base.*;
 
 public class ABC234_D extends BaseTester{
   public ABC234_D(InputStream in,OutputStream out,OutputStream log){ super(in,out,log); }
@@ -18,7 +20,7 @@ public class ABC234_D extends BaseTester{
     int N = in.it();
     int K = in.it();
     long[] P = in.lg(N);
-    var avl = new AVLTree<Long>(Comparator.comparing(d -> -d)){
+    AVLTree<Long> avl = new AVLTree<>(Comparator.comparing(d -> -d)){
       @Override
       protected Long e(){ return 0L; }
 

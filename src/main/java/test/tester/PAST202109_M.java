@@ -3,13 +3,12 @@ package test.tester;
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
-import library.graph.unionfind.RelationalUnionFind;
-import library.io.MyReader;
+import library.graph.unionfind.*;
+import library.io.*;
+import test.base.*;
 
 public class PAST202109_M extends BaseTester{
   public PAST202109_M(InputStream in,OutputStream out,OutputStream log){ super(in,out,log); }

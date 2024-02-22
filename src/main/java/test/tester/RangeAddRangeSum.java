@@ -6,6 +6,7 @@ import java.util.*;
 import library.dataStructure.rangeData.base.*;
 import library.dataStructure.rangeData.segmentTree.*;
 import library.io.*;
+import test.base.*;
 
 public class RangeAddRangeSum extends BaseTester{
   public RangeAddRangeSum(InputStream in,OutputStream out,OutputStream log){ super(in,out,log); }
