@@ -2,13 +2,14 @@ package library.graph.unionfind;
 
 import static java.util.Arrays.*;
 
+import library.util.*;
+
 public abstract class RelationalUnionFind<F> extends UnionFind{
   private F[] dist;
 
-  @SuppressWarnings("unchecked")
   public RelationalUnionFind(int n){
     super(n);
-    dist = (F[]) new Object[n];
+    dist = Util.cast(new Object[n]);
     setAll(dist,i -> id());
   }
 

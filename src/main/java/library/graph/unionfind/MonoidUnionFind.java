@@ -2,6 +2,8 @@ package library.graph.unionfind;
 
 import static java.util.Arrays.*;
 
+import library.util.*;
+
 /**
  * マージ時に総和も計算する
  * 可換モノイドがのる
@@ -12,10 +14,9 @@ import static java.util.Arrays.*;
 public abstract class MonoidUnionFind<V> extends UnionFind{
   private V[] val;
 
-  @SuppressWarnings("unchecked")
   public MonoidUnionFind(int n){
     super(n);
-    val = (V[]) new Object[n];
+    val = Util.cast(new Object[n]);
     setAll(val,this::init);
   }
 

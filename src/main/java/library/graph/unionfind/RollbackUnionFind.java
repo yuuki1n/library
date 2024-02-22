@@ -1,6 +1,6 @@
 package library.graph.unionfind;
 
-import java.util.Stack;
+import library.dataStructure.collection.*;
 
 /**
  * rollback可能UnionFind
@@ -8,12 +8,9 @@ import java.util.Stack;
  *
  */
 public class RollbackUnionFind extends UnionFind{
-  private Stack<int[]> hst;
+  private MyStack<int[]> hst = new MyStack<>();
 
-  public RollbackUnionFind(int n){
-    super(n);
-    hst = new Stack<>();
-  }
+  public RollbackUnionFind(int n){ super(n); }
 
   @Override
   public int root(int x){ return dat[x] < 0 ? x : root(dat[x]); }
