@@ -3,9 +3,10 @@ package library.string;
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
 
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.*;
+import java.util.function.*;
 
-import library.util.Util;
+import library.util.*;
 
 /**
  * ローリングハッシュ
@@ -23,18 +24,19 @@ public class RollingHash{
   private boolean updatale;
   private RollingHash rev;
 
-  public RollingHash(char[] S,boolean updatable){ this(Util.arrL(S.length,i -> S[i]),updatable); }
+  public RollingHash(int[] S,boolean updatale){ this(S.length,i -> S[i],updatale); }
 
-  public RollingHash(int[] S,boolean updatable){ this(Util.arrL(S.length,i -> S[i]),updatable); }
+  public RollingHash(long[] S,boolean updatale){ this(S.length,i -> S[i],updatale); }
 
-  public RollingHash(long[] S,boolean updatale){
-    this.S = new long[S.length];
+  public RollingHash(char[] S,boolean updatale){ this(S.length,i -> S[i],updatale); }
+
+  private RollingHash(int n,IntToLongFunction f,boolean updatale){
+    S = new long[this.n = n];
     this.updatale = updatale;
-    n = this.S.length;
     hash = new long[n +1];
     setPow(n);
     for (int i = 0;i < n;i++)
-      set(i,S[i]);
+      set(i,f.applyAsLong(i));
   }
 
   public long get(int l,int r){
@@ -48,10 +50,6 @@ public class RollingHash{
     set(i,v);
     if (rev != null)
       rev.set(n -i -1,v);
-  }
-
-  public static boolean equal(RollingHash rhS,int sl,int sr,RollingHash rhT,int tl,int tr){
-    return rhS.get(sl,sr) == rhT.get(tl,tr);
   }
 
   private void set(int i,long v){
