@@ -1,18 +1,17 @@
-package test.solver;
+package test.tester;
 
 import static java.lang.Math.*;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Optional;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
-import library.io.MyReader;
-import library.io.MyWriter;
-import library.util.Util;
+import library.io.*;
+import library.util.*;
 
-public abstract class BaseSolver extends Util{
-  public BaseSolver(InputStream in,OutputStream out,OutputStream log){ super(in,out,log); }
+public abstract class BaseTester extends BaseSolver{
+  public BaseTester(InputStream in,OutputStream out,OutputStream log){
+    super(new MyReader(in),new MyWriter(out,false),new MyWriter(log,true));
+  }
 
   public abstract Object solve();
 
@@ -29,7 +28,9 @@ public abstract class BaseSolver extends Util{
 
   public long exe(){
     reset();
-    Optional.ofNullable(solve()).ifPresent(out::println);
+    int T = multi ? in.it() : 1;
+    while (T-- > 0)
+      Optional.ofNullable(solve()).ifPresent(out::println);
     out.flush();
     return elapsed();
   }
