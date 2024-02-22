@@ -1,9 +1,6 @@
-package test;
+package test.tester;
 
 import java.util.*;
-
-import library.io.*;
-import library.util.*;
 
 /**
  * 仮で動かすところ

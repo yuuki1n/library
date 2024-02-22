@@ -1,12 +1,9 @@
-package test.base;
+package test.tester;
 
 import static java.lang.Math.*;
 
 import java.io.*;
 import java.util.*;
-
-import library.io.*;
-import library.util.*;
 
 public abstract class BaseTester extends BaseSolver{
   public BaseTester(InputStream in,OutputStream out,OutputStream log){

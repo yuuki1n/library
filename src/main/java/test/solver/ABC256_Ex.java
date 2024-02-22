@@ -1,4 +1,4 @@
-package test.tester;
+package test.solver;
 
 import static java.lang.Math.*;
 
@@ -8,7 +8,7 @@ import library.dataStructure.rangeData.base.*;
 import library.dataStructure.rangeData.segmentTree.*;
 import library.util.*;
 import test.*;
-import test.base.*;
+import test.tester.*;
 
 public class ABC256_Ex extends BaseTester{
   public ABC256_Ex(InputStream in,OutputStream out,OutputStream log){ super(in,out,log); }

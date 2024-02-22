@@ -1,4 +1,4 @@
-package test.tester;
+package test.solver;
 
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
@@ -10,7 +10,7 @@ import java.util.Comparator;
 import library.dataStructure.AVLTree;
 import library.dataStructure.rangeData.base.BaseV;
 import test.*;
-import test.base.*;
+import test.tester.*;
 
 public class ABC234_D extends BaseTester{
   public ABC234_D(InputStream in,OutputStream out,OutputStream log){ super(in,out,log); }

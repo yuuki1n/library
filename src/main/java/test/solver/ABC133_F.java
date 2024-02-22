@@ -1,4 +1,4 @@
-package test.tester;
+package test.solver;
 
 import java.io.*;
 import java.util.*;
@@ -7,7 +7,7 @@ import library.dataStructure.rangeData.base.*;
 import library.graph.*;
 import library.graph.tree.*;
 import test.*;
-import test.base.*;
+import test.tester.*;
 
 public class ABC133_F extends BaseTester{
   public ABC133_F(InputStream in,OutputStream out,OutputStream log){ super(in,out,log); }

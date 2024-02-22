@@ -1,10 +1,10 @@
-package test.tester;
+package test.solver;
 
 import java.io.*;
 
 import library.dataStructure.rangeData.base.*;
 import library.string.*;
-import test.base.*;
+import test.tester.*;
 
 public class ABC331_F extends BaseTester{
   public ABC331_F(InputStream in,OutputStream out,OutputStream log){ super(in,out,log); }

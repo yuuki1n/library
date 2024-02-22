@@ -1,12 +1,10 @@
-package test;
+package test.tester;
 
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
 
-import library.io.MyReader;
-import test.base.*;
-import test.tester.*;
+import test.solver.*;
 
 public class Test{
   final int thread = 8;

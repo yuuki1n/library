@@ -1,11 +1,10 @@
-package library.io;
+package test.tester;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.reflect.Array;
-import java.util.Objects;
+import java.io.*;
+import java.lang.reflect.*;
+import java.util.*;
 
-import library.util.Util;
+import library.util.*;
 
 public class MyWriter{
   private OutputStream out;

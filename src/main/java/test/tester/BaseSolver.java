@@ -1,10 +1,10 @@
-package library.util;
+package test.tester;
 
 import static java.lang.Math.*;
 
 import java.util.function.*;
 
-import library.io.*;
+import library.util.*;
 
 public class BaseSolver extends Util{
   public MyReader in;

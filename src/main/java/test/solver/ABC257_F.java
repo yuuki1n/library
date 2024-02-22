@@ -1,4 +1,4 @@
-package test.tester;
+package test.solver;
 
 import static java.lang.Math.*;
 
@@ -6,7 +6,7 @@ import java.io.*;
 
 import library.graph.*;
 import test.*;
-import test.base.*;
+import test.tester.*;
 
 public class ABC257_F extends BaseTester{
   public ABC257_F(InputStream in,OutputStream out,OutputStream log){ super(in,out,log); }
