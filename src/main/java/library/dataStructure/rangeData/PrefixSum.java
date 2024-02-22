@@ -1,18 +1,20 @@
 package library.dataStructure.rangeData;
 
-import library.dataStructure.rangeData.base.RangeData;
+public class PrefixSum{
+  private long[] sum;
+  private int i;
 
-public abstract class PrefixSum extends RangeData<Long, Long>{
-  long[] sum;
+  public PrefixSum(int n){ sum = new long[n +1]; }
 
-  public PrefixSum(int n){
-    sum = new long[n +1];
-    for (int i = 0;i < n;i++)
-      sum[i +1] = sum[i] +a(i);
+  public PrefixSum(long[] a){
+    this(a.length);
+    for (int i = 0;i < a.length;i++)
+      sum[i +1] = sum[i] +a[i];
   }
 
-  abstract Long a(int i);
+  public void add(long a){ sum[i +1] = sum[i++] +a; }
 
-  @Override
-  public Long get(int l,int r){ return sum[r] -sum[l]; }
+  public long get(int l,int r){ return sum[r] -sum[l]; }
+
+  public long get(int i){ return get(i,i +1); }
 }
