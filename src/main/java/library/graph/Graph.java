@@ -1,7 +1,7 @@
 package library.graph;
 
-import java.util.ArrayList;
-import java.util.List;
+import library.dataStructure.collection.*;
+import library.util.*;
 
 /**
  * グラフ
@@ -11,20 +11,21 @@ import java.util.List;
  */
 public class Graph<L> {
   public int n;
-  public List<Edge<L>> es;
-  private List<Edge<L>>[] go,bk;
+  public MyList<Edge<L>> es;
+  private MyList<Edge<L>>[] go,bk;
 
-  @SuppressWarnings("unchecked")
   public Graph(int n,boolean dir){
     this.n = n;
-    go = new List[n];
-    bk = dir ? new List[n] : go;
+    go = Util.cast(new MyList[n]);
+    bk = dir ? Util.cast(new MyList[n]) : go;
     for (int i = 0;i < n;i++) {
-      go[i] = new ArrayList<>();
-      bk[i] = new ArrayList<>();
+      go[i] = new MyList<>();
+      bk[i] = new MyList<>();
     }
-    es = new ArrayList<>();
+    es = new MyList<>();
   }
+
+  protected L inv(L l){ return l; }
 
   public void addEdge(int u,int v){ addEdge(u,v,null); }
 
@@ -36,9 +37,7 @@ public class Graph<L> {
     bk[v].add(e.re = re);
   }
 
-  protected L inv(L l){ return l; }
+  public MyList<Edge<L>> go(int u){ return go[u]; }
 
-  public List<Edge<L>> go(int ui){ return go[ui]; }
-
-  public List<Edge<L>> back(int ui){ return bk[ui]; }
+  public MyList<Edge<L>> bk(int u){ return bk[u]; }
 }

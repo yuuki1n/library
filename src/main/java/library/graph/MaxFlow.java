@@ -2,7 +2,7 @@ package library.graph;
 
 import static java.lang.Math.*;
 
-import library.util.Util;
+import library.util.*;
 
 public class MaxFlow extends Graph<Long>{
   private long maxCap = 0;
@@ -56,7 +56,7 @@ public class MaxFlow extends Graph<Long>{
     if (u == s)
       return flow;
     long ret = 0;
-    var list = back(u);
+    var list = bk(u);
     for (int eM = list.size();ei[u] < eM;ei[u]++) {
       Edge<Long> re = list.get(ei[u]),e = re.re;
       if (level[u] <= level[e.u] || e.val < base)

@@ -2,7 +2,7 @@ package library.graph;
 
 import static java.lang.Math.*;
 
-import library.util.Util;
+import library.util.*;
 
 public class MinCostFlow extends Dijkstra<long[], Long>{
   private long[] h;
@@ -45,7 +45,7 @@ public class MinCostFlow extends Dijkstra<long[], Long>{
       ret[0] += cost *f;
       ret[1] += f;
       for (int i = 0;i < n;i++)
-        h[i] += len(i);
+        h[i] += get(i);
     }
     return ret;
   }

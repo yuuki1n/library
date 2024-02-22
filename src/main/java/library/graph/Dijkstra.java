@@ -2,53 +2,47 @@ package library.graph;
 
 import static java.util.Arrays.*;
 
-import java.util.ArrayDeque;
-import java.util.Comparator;
-import java.util.Deque;
+import java.lang.reflect.*;
+import java.util.*;
+
+import library.util.*;
 
 public abstract class Dijkstra<E, L> extends Graph<E>{
+  private Comparator<L> cmp;
   private L[] len;
-  private int[] arr,rev;
+  private int[] hep,idx;
   private Edge<E>[] pre;
-  private L zero = zero(),inf = inf();
-  private Comparator<L> cmp = cmp();
   private int sz;
 
   public Dijkstra(int n,boolean dir){
     super(n,dir);
-    arr = new int[n];
-    rev = new int[n];
+    hep = new int[n];
+    idx = new int[n];
+    cmp = cmp();
   }
 
   protected abstract L zero();
   protected abstract L inf();
-  protected abstract L f(L l,Edge<E> val);
+  protected abstract L f(L l,Edge<E> e);
 
-  @SuppressWarnings("unchecked")
-  protected Comparator<L> cmp(){ return (Comparator<L>) Comparator.naturalOrder(); }
+  protected Comparator<L> cmp(){ return Util.cast(Comparator.naturalOrder()); }
 
-  public void calc(int s){ calc(s,-1); }
+  public L[] calc(int s){ return calc(s,-1); }
 
-  @SuppressWarnings("unchecked")
-  public void calc(int s,int g){
-    len = (L[]) new Object[n];
-    fill(len,inf);
-    setAll(arr,i -> i);
-    setAll(rev,i -> i);
-    pre = new Edge[n];
-    sz = n;
-    set(s,zero);
-    for (int cur;0 < sz && (cur = poll()) != g;) {
-      L l = len[cur];
-      for (var e:go(cur)) {
-        L ll = f(l,e);
-        if (cmp.compare(ll,len[e.v]) < 0)
-          set((pre[e.v] = e).v,ll);
-      }
-    }
+  public L[] calc(int s,int g){
+    len = Util.cast(Array.newInstance(zero().getClass(),sz = n));
+    pre = Util.cast(new Edge[n]);
+    fill(len,inf());
+    setAll(hep,i -> i);
+    setAll(idx,i -> i);
+    set(s,zero());
+    for (int cur;0 < sz && (cur = poll()) != g;)
+      for (var e:go(cur))
+        set((pre[e.v] = e).v,f(len[cur],e));
+    return len;
   }
 
-  public L len(int t){ return len[t]; }
+  public L get(int t){ return len[t]; }
 
   public Deque<Edge<E>> path(int t){
     Deque<Edge<E>> ret = new ArrayDeque<>();
@@ -61,21 +55,21 @@ public abstract class Dijkstra<E, L> extends Graph<E>{
   }
 
   private void set(int i,L l){
-    if (sz <= rev[i] || cmp.compare(len[i],l) <= 0)
-      return;
-    len[i] = l;
-    heapfy(rev[i]);
+    if (idx[i] < sz && cmp.compare(l,len[i]) < 0) {
+      len[i] = l;
+      heapfy(idx[i]);
+    }
   }
 
   private int poll(){
-    int ret = arr[0];
+    int ret = hep[0];
     heapfy(swap(0,--sz));
     return ret;
   }
 
   private void heapfy(int k){
     int p = k -1 >>1;
-    if (0 <= p && cmp.compare(len[arr[p]],len[arr[k]]) > 0) {
+    if (0 <= p && cmp.compare(len[hep[p]],len[hep[k]]) > 0) {
       heapfy(swap(p,k));
       return;
     }
@@ -84,19 +78,19 @@ public abstract class Dijkstra<E, L> extends Graph<E>{
     if (sz <= c)
       return;
 
-    if (c +1 < sz && cmp.compare(len[arr[c +1]],len[arr[c]]) < 0)
+    if (c +1 < sz && cmp.compare(len[hep[c]],len[hep[c +1]]) > 0)
       c++;
 
-    if (cmp.compare(len[arr[c]],len[arr[k]]) < 0)
+    if (cmp.compare(len[hep[c]],len[hep[k]]) < 0)
       heapfy(swap(c,k));
   }
 
   private int swap(int i,int j){
-    int t = arr[i];
-    arr[i] = arr[j];
-    arr[j] = t;
-    rev[arr[i]] = i;
-    rev[arr[j]] = j;
+    hep[i] ^= hep[j];
+    hep[j] ^= hep[i];
+    hep[i] ^= hep[j];
+    idx[hep[i]] = i;
+    idx[hep[j]] = j;
     return i;
   }
 }
