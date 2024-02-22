@@ -3,7 +3,9 @@ package library.math;
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
 
-import library.util.Util;
+import java.util.*;
+
+import library.util.*;
 
 public class Prime{
   private long[] spf,
@@ -13,7 +15,8 @@ public class Prime{
   public Prime(){ this(1_000_000); }
 
   public Prime(int n){
-    spf = Util.arrL(n +1,i -> i);
+    spf = new long[n +1];
+    Arrays.setAll(spf,i -> i);
     for (int p = 2;p *p <= n;p++)
       if (spf[p] == p)
         for (int l = p *p;l <= n;l += p)
@@ -29,15 +32,15 @@ public class Prime{
 
     long[] ret = new long[l];
     ret[id++] = 1;
-    ret[id++] = fs[0];
-    for (int i = 1,s = 0,sz = 1;i < fs.length;i++,s += sz) {
-      if (fs[i -1] < fs[i]) {
+    for (int i = 0,s = 0,sz = 1;i < fs.length;i++,s += sz) {
+      if (0 < i && fs[i -1] < fs[i]) {
         sz = id;
         s = 0;
       }
       for (int j = s;j < s +sz;j++)
         ret[id++] = ret[j] *fs[i];
     }
+    sort(ret);
     return ret;
   }
 
