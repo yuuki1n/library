@@ -34,12 +34,12 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
   public void ins(int i,V v,int k){ root = root == null ? new Node(v,k) : ins(root,i,v,k); }
 
   private Node ins(Node nd,int i,V v,int k){
-    if (nd.leaf && (i == 0 || i == nd.sz)) {
+    if (nd.lft == null && (i == 0 || i == nd.sz)) {
       split(nd,i == 0 ? 1 : -1,v,k,nd.sz +k);
       return nd.merge();
     }
 
-    if (nd.leaf)
+    if (nd.lft == null)
       split(nd,1,ag(e(),e,nd.val),i,nd.sz);
     else
       nd.push();
@@ -59,7 +59,7 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
   }
 
   private Node del(V ret,Node nd,int i){
-    if (nd.leaf) {
+    if (nd.lft == null) {
       nd.sz--;
       ag(ret,e,nd.val);
       return 0 < nd.sz ? nd : null;
@@ -87,7 +87,7 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
     if (l == 0 && r == nd.sz)
       return nd.prop(f);
 
-    if (nd.leaf)
+    if (nd.lft == null)
       split(nd,1,ag(e(),e,nd.val),0 < l ? l : r,nd.sz);
     else
       nd.push();
@@ -115,7 +115,7 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
   }
 
   private void split(Node nd,int i){
-    if (nd.leaf)
+    if (nd.lft == null)
       split(nd,1,ag(e(),e,nd.val),i,nd.sz);
     else {
       nd.push();
@@ -159,8 +159,8 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
   private void get(V ret,Node nd,int l,int r){
     if (l == 0 && r == nd.sz)
       ag(ret,ret,nd.val());
-    else if (nd.leaf)
-      ag(ret,ret,pw(t,nd.val,r -l));
+    else if (nd.lft == null)
+      ag(ret,ret,pw(nd.val,r -l));
     else {
       nd.push();
       if (l < nd.lft.sz)
@@ -192,7 +192,8 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
         ag(v,v,t);
   }
 
-  private V pw(V ret,V a,int n){
+  private V pw(V a,int n){
+    V ret = e();
     pow(ret,a,n);
     ret.sz = n;
     return ret;
@@ -217,11 +218,10 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
   }
 
   private class Node{
-    private int sz,rnk,bis,tog;
+    private int sz,bis,rnk,tog;
     private V val;
     private F laz;
     private Node lft,rht;
-    private boolean leaf = true;
 
     private Node(V val,int sz){
       this.sz = sz;
@@ -234,7 +234,6 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
       rnk = max(lft.rnk,rht.rnk) +1;
       ag(val,lft.val(),rht.val());
       sz = val.sz;
-      leaf = false;
       return this;
     }
 
@@ -254,7 +253,7 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
 
     private Node prop(F f){
       map(val,f);
-      if (!leaf)
+      if (lft != null)
         laz = laz == null ? f : comp(laz,f);
       return this;
     }
@@ -265,7 +264,7 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
       lft = rht;
       rht = tn;
       tog(val);
-      if (!leaf)
+      if (lft != null)
         tog ^= 1;
       return this;
     }
@@ -274,6 +273,6 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
 
     private void cld(int c,Node nd){ nd = c < 0 ? (lft = nd) : (rht = nd); }
 
-    private V val(){ return leaf && 1 < sz ? pw(e(),val,sz) : val; }
+    private V val(){ return lft == null && 1 < sz ? pw(val,sz) : val; }
   }
 }
