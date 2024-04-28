@@ -21,18 +21,18 @@ public class RollingHash{
   private static long[] pow = {1};
   int n;
   private long[] hash,S;
-  private boolean updatale;
+  private boolean updatable;
   private RollingHash rev;
 
-  public RollingHash(int[] S,boolean updatale){ this(S.length,i -> S[i],updatale); }
+  public RollingHash(char[] S,boolean updatable){ this(S.length,i -> S[i],updatable); }
 
-  public RollingHash(long[] S,boolean updatale){ this(S.length,i -> S[i],updatale); }
+  public RollingHash(int[] S,boolean updatable){ this(S.length,i -> S[i],updatable); }
 
-  public RollingHash(char[] S,boolean updatale){ this(S.length,i -> S[i],updatale); }
+  public RollingHash(long[] S,boolean updatable){ this(S.length,i -> S[i],updatable); }
 
-  private RollingHash(int n,IntToLongFunction f,boolean updatale){
+  public RollingHash(int n,IntToLongFunction f,boolean updatale){
     S = new long[this.n = n];
-    this.updatale = updatale;
+    updatable = updatale;
     hash = new long[n +1];
     setPow(n);
     for (int i = 0;i < n;i++)
@@ -46,14 +46,14 @@ public class RollingHash{
   }
 
   public void upd(int i,long v){
-    assert updatale;
+    assert updatable;
     set(i,v);
     if (rev != null)
       rev.set(n -i -1,v);
   }
 
   private void set(int i,long v){
-    if (updatale)
+    if (updatable)
       for (int x = i +1;x <= n;x += x &-x)
         hash[x] = mod(hash[x] +mul(v -S[i],pow[x -i -1]));
     else
@@ -63,7 +63,7 @@ public class RollingHash{
 
   private long hash(int i){
     long ret = 0;
-    if (updatale)
+    if (updatable)
       for (int x = i;x > 0;x -= x &-x)
         ret = mod(ret +mul(hash[x],pow[i -x]));
     else
@@ -84,7 +84,7 @@ public class RollingHash{
     long[] s = new long[n];
     for (int i = 0;i < n;i++)
       s[i] = S[n -1 -i];
-    return new RollingHash(s,updatale);
+    return new RollingHash(s,updatable);
   }
 
   private static long mul(long a,long b){
