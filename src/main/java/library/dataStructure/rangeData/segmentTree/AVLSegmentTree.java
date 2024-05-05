@@ -34,21 +34,18 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
   public void ins(int i,V v,int k){ root = root == null ? new Node(v,k) : ins(root,i,v,k); }
 
   private Node ins(Node nd,int i,V v,int k){
-    if (nd.lft == null && (i == 0 || i == nd.sz)) {
+    if (nd.lft == null && (i == 0 || i == nd.sz))
       split(nd,i == 0 ? 1 : -1,v,k,nd.sz +k);
-      return nd.update();
+    else {
+      if (nd.lft == null)
+        split(nd,1,ag(e(),e,nd.val),i,nd.sz);
+      else
+        nd.push();
+      if (i < nd.lft.sz)
+        nd.lft = ins(nd.lft,i,v,k);
+      else
+        nd.rht = ins(nd.rht,i -nd.lft.sz,v,k);
     }
-
-    if (nd.lft == null)
-      split(nd,1,ag(e(),e,nd.val),i,nd.sz);
-    else
-      nd.push();
-
-    if (i < nd.lft.sz)
-      nd.lft = ins(nd.lft,i,v,k);
-    else
-      nd.rht = ins(nd.rht,i -nd.lft.sz,v,k);
-
     return balance(nd);
   }
 
