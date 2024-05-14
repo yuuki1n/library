@@ -4,7 +4,6 @@ import static java.lang.Math.*;
 import static java.util.Arrays.*;
 
 import java.util.concurrent.*;
-import java.util.function.*;
 
 import library.util.*;
 
@@ -14,29 +13,30 @@ import library.util.*;
  *
  */
 public class RollingHash{
-  private static long MASK30 = (1L <<30) -1;
-  private static long MASK31 = (1L <<31) -1;
-  private static long MOD = (1L <<61) -1;
-  private static long m = base();
+  private static long MOD = (1L <<61) -1,MASK30 = (1L <<30) -1,MASK31 = (1L <<31) -1,
+      base = ThreadLocalRandom.current().nextLong(Util.infI,MOD);
   private static long[] pow = {1};
   int n;
   private long[] hash,S;
   private boolean updatable;
   private RollingHash rev;
 
-  public RollingHash(char[] S,boolean updatable){ this(S.length,i -> S[i],updatable); }
+  public RollingHash(char[] S,boolean updatable){ this(Util.arrL(S.length,i -> S[i]),updatable); }
 
-  public RollingHash(int[] S,boolean updatable){ this(S.length,i -> S[i],updatable); }
+  public RollingHash(int[] S,boolean updatable){ this(Util.arrL(S.length,i -> S[i]),updatable); }
 
-  public RollingHash(long[] S,boolean updatable){ this(S.length,i -> S[i],updatable); }
-
-  public RollingHash(int n,IntToLongFunction f,boolean updatale){
-    S = new long[this.n = n];
-    updatable = updatale;
+  public RollingHash(long[] S,boolean updatable){
+    this.S = new long[n = S.length];
+    this.updatable = updatable;
     hash = new long[n +1];
-    setPow(n);
+    if (pow.length <= n) {
+      int s = pow.length;
+      pow = copyOf(pow,max(pow.length <<1,n +1));
+      for (int i = s;i < pow.length;i++)
+        pow[i] = mul(pow[i -1],base);
+    }
     for (int i = 0;i < n;i++)
-      set(i,f.applyAsLong(i));
+      set(i,S[i]);
   }
 
   public long get(int l,int r){
@@ -57,7 +57,7 @@ public class RollingHash{
       for (int x = i +1;x <= n;x += x &-x)
         hash[x] = mod(hash[x] +mul(v -S[i],pow[x -i -1]));
     else
-      hash[i +1] = mod(mul(hash[i],m) +v);
+      hash[i +1] = mod(mul(hash[i],base) +v);
     S[i] = v;
   }
 
@@ -71,15 +71,6 @@ public class RollingHash{
     return ret;
   }
 
-  private void setPow(int n){
-    if (n < pow.length)
-      return;
-    int s = pow.length;
-    pow = copyOf(pow,max(pow.length <<1,n +1));
-    for (int i = s;i < pow.length;i++)
-      pow[i] = mul(pow[i -1],m);
-  }
-
   private RollingHash rev(){
     long[] s = new long[n];
     for (int i = 0;i < n;i++)
@@ -88,46 +79,15 @@ public class RollingHash{
   }
 
   private static long mul(long a,long b){
-    long lu = a >>31;
-    long ld = a &MASK31;
-    long ru = b >>31;
-    long rd = b &MASK31;
-    long mid = ld *ru +lu *rd;
-    return mod((lu *ru <<1) +ld *rd +((mid &MASK30) <<31) +(mid >>30));
+    long au = a >>31;
+    long ad = a &MASK31;
+    long bu = b >>31;
+    long bd = b &MASK31;
+    long mid = ad *bu +au *bd;
+    return mod((au *bu <<1) +(mid >>30) +((mid &MASK30) <<31) +ad *bd);
   }
 
   private static long mod(long val){
-    while (val < 0)
-      val += MOD;
-    val = (val &MOD) +(val >>61);
-    return val > MOD ? val -MOD : val;
-  }
-
-  private static long pow(long x,long n){
-    long ret = 1;
-    do {
-      if ((n &1) == 1)
-        ret = mul(ret,x);
-      x = mul(x,x);
-    } while (0 < (n >>= 1));
-    return ret;
-  }
-
-  private static long base(){
-    long m = 0;
-    for (int k = 1;m < Util.infI;m = pow(37,k))
-      while (!isPrimeRoot(k))
-        k = ThreadLocalRandom.current().nextInt(Util.infI);
-    return m;
-  }
-
-  private static boolean isPrimeRoot(long a){
-    long b = MOD -1;
-    while (0 < b) {
-      long t = a;
-      a = b;
-      b = t %b;
-    }
-    return a > 1;
+    return val < 0 ? val +MOD : (val = (val &MOD) +(val >>61)) < MOD ? val : val -MOD;
   }
 }
