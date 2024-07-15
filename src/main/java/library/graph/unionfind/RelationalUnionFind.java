@@ -2,14 +2,13 @@ package library.graph.unionfind;
 
 import static java.util.Arrays.*;
 
-import library.util.*;
-
 public abstract class RelationalUnionFind<F> extends UnionFind{
   private F[] dist;
 
+  @SuppressWarnings("unchecked")
   public RelationalUnionFind(int n){
     super(n);
-    dist = Util.cast(new Object[n]);
+    dist = (F[]) new Object[n];
     setAll(dist,i -> id());
   }
 
@@ -31,22 +30,18 @@ public abstract class RelationalUnionFind<F> extends UnionFind{
 
   public boolean valid(int u,int v,F c){ return !same(u,v) || eq(dist(u,v),c); }
 
+  @Deprecated
   @Override
   public boolean unite(int u,int v){ return unite(u,v,id()); }
 
-  /**
-   * A[v]=f(A[u])となる関係fを追加する
-   * @param u
-   * @param v
-   * @param f
-   * @return
-   */
   public boolean unite(int u,int v,F f){
-    assert valid(u,v,f);
+    if (!valid(u,v,f))
+      return false;
+    if (same(u,v))
+      return true;
     f = comp(dist(u),f);
     f = comp(f,inv(dist(v)));
-    if (!super.unite(u = root(u),v = root(v)))
-      return false;
+    super.unite(u = root(u),v = root(v));
     if (dat[u] > dat[v])
       dist[u] = inv(f);
     else
@@ -54,19 +49,10 @@ public abstract class RelationalUnionFind<F> extends UnionFind{
     return true;
   }
 
-  /**
-   * @param x
-   * @return　A[x]=f(A[root(x)])となる関係f
-   */
   public F dist(int x){
     root(x);
     return dist[x];
   }
 
-  /**
-   * @param u
-   * @param v
-   * @return　A[v]=f(A[u])となる関係f
-   */
   public F dist(int u,int v){ return !same(u,v) ? null : comp(inv(dist(u)),dist(v)); }
 }

@@ -17,13 +17,14 @@ public class RollbackUnionFind extends UnionFind{
 
   @Override
   public boolean unite(int u,int v){
-    if (!super.unite(u = root(u),v = root(v)))
+    if ((u = root(u)) == (v = root(v)))
       return false;
+
     hst.add(new int[]{u, dat[u]});
     hst.add(new int[]{v, dat[v]});
     hst.add(new int[]{u, nxt[u]});
     hst.add(new int[]{v, nxt[v]});
-    return true;
+    return super.unite(u,v);
   }
 
   public void undo(){
