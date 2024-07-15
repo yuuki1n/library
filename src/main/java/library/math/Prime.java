@@ -25,7 +25,7 @@ public class Prime{
 
   public long[] divisors(long n){
     long[] fs = factorize(n);
-    int l = 2,id = 0;
+    int l = fs.length > 0 ? 2 : 1,id = 0;
     for (int i = 1,sz = 1;i < fs.length;i++,l += sz)
       if (fs[i -1] < fs[i])
         sz = l;

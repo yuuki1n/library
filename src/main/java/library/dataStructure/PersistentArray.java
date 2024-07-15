@@ -6,6 +6,11 @@ import java.util.*;
 
 import library.util.*;
 
+/**
+ * 永続配列
+ * @author yuuki_n
+ *
+ */
 public class PersistentArray{
   private TreeMap<Integer, Integer>[] arr;
 
