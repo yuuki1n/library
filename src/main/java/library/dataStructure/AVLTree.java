@@ -2,119 +2,78 @@ package library.dataStructure;
 
 import static java.lang.Math.*;
 
-import java.util.*;
-
-import library.dataStructure.rangeData.base.*;
-import library.util.*;
-
-public abstract class AVLTree<V extends BaseV> {
-  private V e = e(),t = e();
+public class AVLTree{
   private Node root;
-  private Comparator<V> cmp;
 
-  public AVLTree(){ this(Util.cast(Comparator.naturalOrder())); }
+  public void add(long v){ add(v,1); }
 
-  public AVLTree(Comparator<V> cmp){ this.cmp = cmp; }
+  public void add(long v,int k){ root = root == null ? new Node(v,k) : add(root,v,k); }
 
-  public void add(V v){
-    if (root == null)
-      root = new Node(v,1);
-    else
-      root = add(root,v);
-  }
-
-  private Node add(Node nd,V v){
+  private Node add(Node nd,long v,int k){
     if (nd.lft == null) {
-      int c = cmp.compare(nd.val,v);
+      int c = Long.compare(nd.val,v);
       if (c == 0) {
-        nd.sz++;
+        nd.sz += k;
         return nd;
       } else {
-        var ret = new Node(e(),0);
-        ret.cld(-c,new Node(v,1));
+        var ret = new Node(0,0);
+        ret.cld(-c,new Node(v,k));
         ret.cld(c,nd);
         nd = ret;
       }
     } else {
-      int c = cmp.compare(v,nd.rht.l);
-      nd.cld(-1,c < 0 ? add(nd.lft,v) : nd.lft);
-      nd.cld(1,c < 0 ? nd.rht : add(nd.rht,v));
+      int c = Long.compare(v,nd.rht.l);
+      nd.lft = c < 0 ? add(nd.lft,v,k) : nd.lft;
+      nd.rht = c < 0 ? nd.rht : add(nd.rht,v,k);
     }
     return balance(nd);
   }
 
-  public V del(V v){
-    var ret = e();
-    root = del(ret,root,v);
-    return ret;
-  }
+  public void del(long v){ del(v,1); }
 
-  private Node del(V ret,Node nd,V v){
+  public void del(long v,int k){ root = del(root,v,k); }
+
+  private Node del(Node nd,long v,int k){
     if (nd.lft == null) {
-      int c = cmp.compare(nd.val,v);
-      if (c == 0) {
-        nd.sz--;
-        ag(ret,e,nd.val);
-      }
+      int c = Long.compare(nd.val,v);
+      if (c == 0)
+        nd.sz -= k;
       return c != 0 || 0 < nd.sz ? nd : null;
     }
-    int c = cmp.compare(v,nd.rht.l) *2 +1;
-    Node del = del(ret,c < 0 ? nd.lft : nd.rht,v);
+    int c = Long.compare(v,nd.rht.l) *2 +1;
+    Node del = del(c < 0 ? nd.lft : nd.rht,v,k);
     if (del == null)
       return nd.cld(-c);
     nd.cld(c,del);
     return balance(nd);
   }
 
-  public V get(int i){ return get(i,i +1); }
+  public long get(int i){ return get(root,i); }
 
-  public V get(int l,int r){
-    V ret = e();
-    if (root != null)
-      get(ret,root,l,min(r,size()));
-    return ret;
+  private long get(Node nd,int i){
+    return nd.lft == null ? nd.val : i < nd.lft.sz ? get(nd.lft,i) : get(nd.rht,i -nd.lft.sz);
   }
 
-  private void get(V ret,Node nd,int l,int r){
-    if (l == 0 && r == nd.sz)
-      ag(ret,ret,nd.val());
+  public long get(int l,int r){ return root == null ? 0 : get(root,l,min(r,size())); }
+
+  private long get(Node nd,int l,int r){
+    if (0 == l && r == nd.sz)
+      return nd.val();
     else if (nd.lft == null)
-      ag(ret,ret,pw(nd.val,r -l));
+      return nd.val *(r -l);
     else {
+      long ret = 0;
       if (l < nd.lft.sz)
-        get(ret,nd.lft,l,min(nd.lft.sz,r));
+        ret += get(nd.lft,l,min(nd.lft.sz,r));
       if (nd.lft.sz < r)
-        get(ret,nd.rht,max(0,l -nd.lft.sz),r -nd.lft.sz);
+        ret += get(nd.rht,max(0,l -nd.lft.sz),r -nd.lft.sz);
+      return ret;
     }
   }
 
-  public V all(){ return root == null ? e : root.val(); }
-
   public int size(){ return root == null ? 0 : root.sz; }
 
-  protected abstract V e();
-  protected abstract void agg(V v,V a,V b);
-
-  private V ag(V v,V a,V b){
-    agg(v,a,b);
-    v.sz = a.sz +b.sz;
-    return v;
-  }
-
-  protected void pow(V v,V a,int n){
-    for (ag(t,e,a);0 < n;n >>= 1,ag(t,t,t))
-      if (0 < (n &1))
-        ag(v,v,t);
-  }
-
-  private V pw(V a,int n){
-    V ret = e();
-    pow(ret,a,n);
-    ret.sz = n;
-    return ret;
-  }
-
-  private Node balance(Node nd){ return (1 < abs(nd.bis = nd.rht.rnk -nd.lft.rnk) ? (nd = rotate(nd)) : nd).merge(); }
+  private Node balance(Node nd){ return (1 < abs(nd.bis = nd.rht.rnk -nd.lft.rnk) ? (nd = rotate(nd)) : nd).update(); }
 
   private Node rotate(Node u){
     var v = u.cld(u.bis);
@@ -122,27 +81,26 @@ public abstract class AVLTree<V extends BaseV> {
       v = rotate(v);
     u.cld(u.bis,v.cld(-u.bis));
     v.cld(-u.bis,u);
-    u.merge();
+    u.update();
     return v;
   }
 
   private class Node{
     private int sz,bis,rnk;
-    private V val,l;
+    private long val,l;
     private Node lft,rht;
 
-    private Node(V val,int sz){
+    private Node(long val,int sz){
       this.sz = sz;
       this.val = l = val;
-      val.sz = 1;
     }
 
-    private Node merge(){
+    private Node update(){
+      sz = lft.sz +rht.sz;
       bis = rht.rnk -lft.rnk;
       rnk = max(lft.rnk,rht.rnk) +1;
-      ag(val,lft.val(),rht.val());
+      val = lft.val() +rht.val();
       l = lft.l;
-      sz = val.sz;
       return this;
     }
 
@@ -150,6 +108,6 @@ public abstract class AVLTree<V extends BaseV> {
 
     private void cld(int c,Node nd){ nd = c < 0 ? (lft = nd) : (rht = nd); }
 
-    private V val(){ return lft == null && 1 < sz ? pw(val,sz) : val; }
+    private long val(){ return lft == null && 1 < sz ? val *sz : val; }
   }
 }
