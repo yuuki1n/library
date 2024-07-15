@@ -2,20 +2,22 @@ package library.other;
 
 import static java.util.Arrays.*;
 
+import java.lang.reflect.*;
+
 import library.util.*;
 
-public abstract class KetaDp<T> {
+public abstract class DigitDp<T> {
   private int B;
   private int[] N;
   private T[] dp;
 
-  public KetaDp(char[] N){ this(N,10); }
+  public DigitDp(char[] N){ this(N,10); }
 
-  public KetaDp(char[] N,int B){
+  public DigitDp(char[] N,int B){
     this.N = new int[N.length];
     for (int i = 0;i < N.length;i++)
       this.N[i] = N[i] -'0';
-    dp = Util.cast(new Object[N.length +1 <<1]);
+    dp = Util.cast(Array.newInstance(init().getClass(),N.length +1 <<1));
     this.B = B;
     setAll(dp,i -> init());
   }
