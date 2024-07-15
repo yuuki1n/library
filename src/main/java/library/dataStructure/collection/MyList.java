@@ -1,5 +1,6 @@
 package library.dataStructure.collection;
 
+import static java.lang.Math.*;
 import static java.util.Arrays.*;
 
 import java.util.*;
@@ -13,7 +14,12 @@ public class MyList<T> implements Iterable<T>{
 
   public MyList(){ this(16); }
 
-  public MyList(int n){ arr = Util.cast(new Object[n]); }
+  public MyList(int n){ arr = Util.cast(new Object[max(16,n)]); }
+
+  public MyList(MyList<T> org){
+    this(org.sz);
+    System.arraycopy(org.arr,0,arr,0,sz = org.sz);
+  }
 
   public boolean isEmpty(){ return sz == 0; }
 
@@ -37,7 +43,34 @@ public class MyList<T> implements Iterable<T>{
     return ret;
   }
 
+  public void sort(){ sort(Util.cast(Comparator.naturalOrder())); }
+
   public void sort(Comparator<T> cmp){ Arrays.sort(arr,0,sz,cmp); }
+
+  public <U> MyList<U> map(Function<T, U> func){
+    MyList<U> ret = new MyList<>(sz);
+    forEach(t -> ret.add(func.apply(t)));
+    return ret;
+  }
+
+  public MyList<T> rev(){
+    MyList<T> ret = new MyList<>(sz);
+    for (int i = sz;i-- > 0;)
+      ret.add(get(i));
+    return ret;
+  }
+
+  public T[] toArray(){ return copyOf(arr,sz); }
+
+  public void swap(int i,int j){
+    var t = arr[i];
+    arr[i] = arr[j];
+    arr[j] = t;
+  }
+
+  public void set(int i,T t){ arr[i] = t; }
+
+  public void clear(){ sz = 0; }
 
   @Override
   public Iterator<T> iterator(){
@@ -51,20 +84,4 @@ public class MyList<T> implements Iterable<T>{
       public T next(){ return arr[i++]; }
     };
   }
-
-  public <U> MyList<U> map(Function<T, U> func){
-    MyList<U> ret = new MyList<>(sz);
-    forEach(t -> ret.add(func.apply(t)));
-    return ret;
-  }
-
-  public T[] toArray(){ return copyOf(arr,sz); }
-
-  public void swap(int i,int j){
-    var t = arr[i];
-    arr[i] = arr[j];
-    arr[j] = t;
-  }
-
-  public void set(int i,T t){ arr[i] = t; }
 }
