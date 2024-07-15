@@ -24,40 +24,16 @@ public abstract class ReRootingDp<L, D, A> extends Graph<L>{
     ans = Util.cast(Array.newInstance(ans(0,e()).getClass(),n));
   }
 
-  /**
-   * @return dpで持つ値の単位元
-   */
   protected abstract D e();
-  /**
-   * @return dpで持つ値の集約
-   */
   protected abstract D agg(D a,D b);
-  /**
-   * @param v
-   * @param e
-   * @return 頂点e.vに集めたdpの値にe.u方向の辺を足した値
-   */
   protected abstract D adj(D v,Edge<L> e);
-  /**
-   * @param u
-   * @param sum 頂点uに集めたdpの値
-   * @return 頂点uについての解
-   */
   protected abstract A ans(int u,D sum);
 
-  /**
-   * ans(u,sum)内で使用することを想定
-   * @param u
-   * @return 頂点uの割のdpの値list
-   */
   protected MyList<D> sur(int u){ return go(u).map(e -> dp[e.id]); }
 
-  /**
-   * 計算する
-   */
   public A[] calc(){
     for (var e:es)
-      e.re.id = e.id +n;
+      e.re.id += n;
 
     var stk = new MyStack<Edge<L>>();
     var se = new Edge<L>(n -1,-1,0,null);
@@ -103,5 +79,15 @@ public abstract class ReRootingDp<L, D, A> extends Graph<L>{
       }
     }
     return ans;
+  }
+
+  public void clear(){
+    dp[n -1] = null;
+    for (var e:es) {
+      dp[e.id] = dp[e.re.id] = null;
+      go(e.u).clear();
+      go(e.v).clear();
+    }
+    es.clear();
   }
 }
