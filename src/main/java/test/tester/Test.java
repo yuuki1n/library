@@ -7,15 +7,15 @@ import java.util.concurrent.*;
 import test.solver.*;
 
 public class Test{
-  final int thread = 8;
-  static final long LMT = 2000;
+  final int thread = 1;
+  static final long LMT = 5000;
   List<Class<?>> errList = new ArrayList<>();
 
   private void exe() throws Exception{
     //    Thread.sleep(1000);
     //    test(ABC331_F.class);
-    test(ABC133_F.class,"a01");
-    test(ABC133_F.class);
+    //    test(ABC133_F.class,"a01");
+    test(ABC135_F.class);
     //    test(ABC331_F.class,"00_sample_00.txt");
     //    new ABC309_F(System.in,System.out,System.err).exe();
     //    test(ABC256_Ex.class,"01_n_small_00.txt");
@@ -69,7 +69,8 @@ public class Test{
         result = "TLE";
         time = LMT;
       }
-      results.add(new Result(file.getName(),result,time));
+      Result e = new Result(file.getName(),result,time);
+      results.add(e);
     }
 
     var all = true;
@@ -78,7 +79,6 @@ public class Test{
       if (!"AC".equals(result.result))
         all = false;
     }
-
     if (!all)
       errList.add(cls);
     executor.shutdown();

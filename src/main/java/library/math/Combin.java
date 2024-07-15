@@ -3,7 +3,7 @@ package library.math;
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
 
-import library.util.Util;
+import library.util.*;
 
 public class Combin{
   int n = 2;

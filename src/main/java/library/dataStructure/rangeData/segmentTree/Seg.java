@@ -67,6 +67,14 @@ public abstract class Seg<V extends BaseV, F> {
     return arr;
   }
 
+  public V[] getPath(int i){
+    int sz = 32 -Integer.numberOfLeadingZeros(i +n);
+    V[] arr = Util.cast(Array.newInstance(e().getClass(),sz));
+    for (i += n;0 < i;i >>= 1)
+      arr[--sz] = val[i];
+    return arr;
+  }
+
   protected V init(int i){ return e(); }
 
   protected abstract V e();

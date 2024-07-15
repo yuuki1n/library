@@ -39,6 +39,8 @@ public class RollingHash{
       set(i,S[i]);
   }
 
+  public long get(int i){ return get(i,i +1); }
+
   public long get(int l,int r){
     if (l > r)
       return (rev == null ? rev = rev() : rev).get(n -l,n -r);
