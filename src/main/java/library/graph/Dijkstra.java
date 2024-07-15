@@ -14,31 +14,31 @@ public abstract class Dijkstra<E, L> extends Graph<E>{
   private Edge<E>[] pre;
   private int sz;
 
-  public Dijkstra(int n,boolean dir){
+  public Dijkstra(int n,boolean dir){ this(n,dir,Util.cast(Comparator.naturalOrder())); }
+
+  public Dijkstra(int n,boolean dir,Comparator<L> cmp){
     super(n,dir);
     hep = new int[n];
     idx = new int[n];
-    cmp = cmp();
+    this.cmp = cmp;
   }
 
   protected abstract L zero();
   protected abstract L inf();
   protected abstract L f(L l,Edge<E> e);
 
-  protected Comparator<L> cmp(){ return Util.cast(Comparator.naturalOrder()); }
-
   public L[] calc(int s){ return calc(s,-1); }
 
   public L[] calc(int s,int g){
-    len = Util.cast(Array.newInstance(zero().getClass(),sz = n));
+    len = Util.arr(Util.cast(Array.newInstance(inf().getClass(),sz = n)),i -> inf());
     pre = Util.cast(new Edge[n]);
-    fill(len,inf());
     setAll(hep,i -> i);
     setAll(idx,i -> i);
-    set(s,zero());
+    len[s] = zero();
+    heapfy(idx[s]);
     for (int cur;0 < sz && (cur = poll()) != g;)
       for (var e:go(cur))
-        set((pre[e.v] = e).v,f(len[cur],e));
+        move(cur,e);
     return len;
   }
 
@@ -46,18 +46,18 @@ public abstract class Dijkstra<E, L> extends Graph<E>{
 
   public Deque<Edge<E>> path(int t){
     Deque<Edge<E>> ret = new ArrayDeque<>();
-    while (pre[t] != null) {
+    for (;pre[t] != null;t = pre[t].u)
       ret.addFirst(pre[t]);
-      t = pre[t].u;
-    }
 
     return ret;
   }
 
-  private void set(int i,L l){
-    if (idx[i] < sz && cmp.compare(l,len[i]) < 0) {
-      len[i] = l;
-      heapfy(idx[i]);
+  private void move(int cur,Edge<E> e){
+    L l = f(len[cur],e);
+    if (idx[e.v] < sz && cmp.compare(l,len[e.v]) < 0) {
+      len[e.v] = l;
+      pre[e.v] = e;
+      heapfy(idx[e.v]);
     }
   }
 
