@@ -2,124 +2,56 @@ package library.graph.tree;
 
 import static java.util.Arrays.*;
 
+import java.util.*;
+import java.util.function.*;
+
 import library.dataStructure.collection.*;
-import library.dataStructure.rangeData.base.*;
-import library.dataStructure.rangeData.segmentTree.*;
 import library.graph.*;
 
-public abstract class HLD<L, V extends BaseV, F> extends Graph<L>{
+public class HLD extends Graph<Object>{
   private int[] p,hp,l,r;
-  private Seg<V, F> rev,seg;
 
-  public HLD(int n,boolean reversible){
+  public HLD(int n){
     super(n,false);
     p = new int[n];
     hp = new int[n];
     l = new int[n];
     r = new int[n];
-    seg = new LazySegmentTree<>(n){
-      @Override
-      protected void agg(V v,V a,V b){ HLD.this.agg(v,a,b); }
-
-      @Override
-      protected F comp(F f,F g){ return HLD.this.comp(f,g); }
-
-      @Override
-      protected V e(){ return HLD.this.e(); }
-
-      @Override
-      protected void map(V v,F f){ HLD.this.map(v,f); }
-    };
-
-    rev = reversible ? new LazySegmentTree<>(n){
-      @Override
-      protected void agg(V v,V a,V b){ HLD.this.agg(v,b,a); }
-
-      @Override
-      protected F comp(F f,F g){ return HLD.this.comp(f,g); }
-
-      @Override
-      protected V e(){ return HLD.this.e(); }
-
-      @Override
-      protected void map(V v,F f){ HLD.this.map(v,f); }
-    } : seg;
-
   }
 
-  public void updEdge(int e,F f){ upd(es.get(e).v,f); }
-
-  public void upd(Edge<L> e,F f){ upd(l[e.u] > l[e.v] ? e.u : e.v,f); }
-
-  public void upd(int u,F f){
-    rev.upd(l[u],f);
-    if (rev != seg)
-      seg.upd(l[u],f);
-  }
-
-  public void updSub(int u,F f){
-    rev.upd(l[u],r[u],f);
-    if (rev != seg)
-      seg.upd(l[u],r[u],f);
-  }
-
-  public void updPath(int u,int v,int incLca,F f){
-    while (true) {
-      if (l[u] > l[v]) {
-        var t = u;
-        u = v;
-        v = t;
-      }
-
-      var h = hp[v];
-      if (l[h] <= l[u]) {
-        rev.upd(l[u] +1 -incLca,l[v] +1,f);
-        if (rev != seg)
-          seg.upd(l[u] +1 -incLca,l[v] +1,f);
-        return;
-      }
-
-      rev.upd(l[h],l[v] +1,f);
-      if (rev != seg)
-        seg.upd(l[h],l[v] +1,f);
-      v = p[h];
+  public MyList<int[]> auxiliary(MyList<Integer> lis){
+    lis = new MyList<>(lis);
+    lis.add(0);
+    MyList<int[]> ret = new MyList<>();
+    lis.sort(Comparator.comparing(i -> l[i]));
+    for (int i = lis.size() -1;i > 0;i--)
+      lis.add(lca(lis.get(i -1),lis.get(i)));
+    lis.sort(Comparator.comparing(i -> l[i]));
+    MyStack<Integer> stk = new MyStack<>();
+    stk.add(lis.get(0));
+    for (var y:lis) {
+      while (r[stk.peek()] <= l[y])
+        stk.pop();
+      if (!stk.peek().equals(y))
+        ret.add(new int[]{stk.peek(), y});
+      stk.add(y);
     }
+    return ret;
   }
 
-  public V get(int u){ return rev.get(l[u]); }
-
-  public V getSub(int u,int incLca){ return rev.get(l[u] +1 -incLca,r[u]); }
-
-  public V getPath(int u,int v,int incLca){
-    V vl = e(),vr = e();
-    boolean tog = false;
-    while (true) {
-      if (l[u] > l[v]) {
-        var t = u;
-        u = v;
-        v = t;
-        tog ^= true;
-      }
-
-      var h = hp[v];
-      if (l[h] <= l[u]) {
-        if (tog)
-          ag(vl,vl,rev.get(l[u] +1 -incLca,l[v] +1));
-        else
-          ag(vr,seg.get(l[u] +1 -incLca,l[v] +1),vr);
-        ag(vl,vl,vr);
-        return vl;
-      }
-
-      if (tog)
-        ag(vl,vl,rev.get(l[h],l[v] +1));
-      else
-        ag(vr,seg.get(l[h],l[v] +1),vr);
-      v = p[h];
-    }
+  public MyList<int[]> getPath(int u,int v,int incLca){
+    MyList<int[]> ret = new MyList<>();
+    var lst = itr(u,v,(a,b) -> {
+      ret.add(new int[]{l[a], l[b] +1});
+      return p[a];
+    });
+    ret.add(new int[]{l[lst[0]] +1 -incLca, l[lst[1]] +1});
+    return ret;
   }
 
-  int lca(int u,int v){
+  public int lca(int u,int v){ return itr(u,v,(a,b) -> p[a])[0]; }
+
+  private int[] itr(int u,int v,IntBinaryOperator f){
     while (true) {
       if (l[u] > l[v]) {
         var t = u;
@@ -129,11 +61,17 @@ public abstract class HLD<L, V extends BaseV, F> extends Graph<L>{
 
       var h = hp[v];
       if (l[h] <= l[u])
-        return u;
+        return new int[]{u, v};
 
-      v = p[h];
+      v = f.applyAsInt(h,v);
     }
   }
+
+  public int ei(int e){ return l[es.get(e).v]; }
+
+  public int l(int u){ return l[u]; }
+
+  public int r(int u){ return r[u]; }
 
   public void makeTree(int s){
     MyStack<Integer> stk = new MyStack<>();
@@ -180,17 +118,5 @@ public abstract class HLD<L, V extends BaseV, F> extends Graph<L>{
         stk.add(v);
       }
     }
-
-  }
-
-  protected abstract V e();
-  protected abstract void agg(V v,V a,V b);
-  protected abstract void map(V v,F f);
-
-  protected F comp(F f,F g){ return null; }
-
-  private void ag(V v,V a,V b){
-    agg(v,a,b);
-    v.sz = a.sz +b.sz;
   }
 }
