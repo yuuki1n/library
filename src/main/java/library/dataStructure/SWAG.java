@@ -9,24 +9,16 @@ public abstract class SWAG<V> {
   public SWAG(){
     front = new Stk(){
       @Override
-      V ag(V sum,V v){
-        var ret = e();
-        agg(ret,v,sum);
-        return ret;
-      }
+      V agg(V sum,V v){ return SWAG.this.agg(v,sum); }
     };
     back = new Stk(){
       @Override
-      V ag(V sum,V v){
-        var ret = e();
-        agg(ret,sum,v);
-        return ret;
-      }
+      V agg(V sum,V v){ return SWAG.this.agg(sum,v); }
     };
   }
 
   protected abstract V e();
-  protected abstract void agg(V v,V a,V b);
+  protected abstract V agg(V a,V b);
 
   public void addFirst(V v){ front.add(v); }
 
@@ -44,11 +36,7 @@ public abstract class SWAG<V> {
     return back.pop();
   }
 
-  public V sum(){
-    var ret = e();
-    agg(ret,front.peekSum(),back.peekSum());
-    return ret;
-  }
+  public V sum(){ return agg(front.peekSum(),back.peekSum()); }
 
   private void f(Stk a,Stk b){
     while (b.size() -1 > tmp.size())
@@ -74,10 +62,10 @@ public abstract class SWAG<V> {
 
     private void add(V v){
       val.add(v);
-      sum.add(ag(sum.peek(),v));
+      sum.add(agg(sum.peek(),v));
     }
 
-    abstract V ag(V sum,V v);
+    abstract V agg(V sum,V v);
 
     private V pop(){
       sum.pop();
