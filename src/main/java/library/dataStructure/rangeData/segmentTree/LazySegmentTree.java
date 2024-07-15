@@ -23,11 +23,14 @@ public abstract class LazySegmentTree<V extends BaseV, F> extends Seg<V, F>{
   }
 
   @Override
-  public V get(int i){ return get(i,i +1); }
+  public V get(int i){
+    down(i,i +1);
+    return super.get(i);
+  }
 
   @Override
-  public V[] getList(int l,int r){
+  public V get(int l,int r){
     down(l,r);
-    return super.getList(l,r);
+    return super.get(l,r);
   }
 }
