@@ -27,11 +27,11 @@ public class HLD extends Graph<Object>{
     for (int i = lis.size() -1;i > 0;i--)
       lis.add(lca(lis.get(i -1),lis.get(i)));
     lis.sort(Comparator.comparing(i -> l[i]));
-    MyStack<Integer> stk = new MyStack<>();
+    MyList<Integer> stk = new MyList<>();
     stk.add(lis.get(0));
     for (var y:lis) {
       while (r[stk.peek()] <= l[y])
-        stk.pop();
+        stk.pollLast();
       if (!stk.peek().equals(y))
         ret.add(new int[]{stk.peek(), y});
       stk.add(y);
@@ -74,13 +74,13 @@ public class HLD extends Graph<Object>{
   public int r(int u){ return r[u]; }
 
   public void makeTree(int s){
-    MyStack<Integer> stk = new MyStack<>();
+    MyList<Integer> stk = new MyList<>();
     fill(hp,-1);
     p[s] = s;
     stk.add(s);
     stk.add(s);
     while (!stk.isEmpty()) {
-      var u = stk.pop();
+      var u = stk.pollLast();
       if (r[u] < 1) {
         r[u] = 1;
         for (var e:go(u)) {
@@ -104,7 +104,7 @@ public class HLD extends Graph<Object>{
 
     stk.add(s);
     for (int hid = 0;!stk.isEmpty();) {
-      var u = stk.pop();
+      var u = stk.pollLast();
       r[u] += l[u] = hid++;
       if (hp[u] < 0)
         hp[u] = u;
