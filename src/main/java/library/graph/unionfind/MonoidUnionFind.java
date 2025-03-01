@@ -25,10 +25,10 @@ public abstract class MonoidUnionFind<V> extends UnionFind{
 
   @Override
   public boolean unite(int u,int v){
-    if (same(u,v))
+    if ((u = root(u)) == (v = root(v)))
       return false;
 
-    if (dat[u = root(u)] > dat[v = root(v)]) {
+    if (dat[u] > dat[v]) {
       u ^= v;
       v ^= u;
       u ^= v;
