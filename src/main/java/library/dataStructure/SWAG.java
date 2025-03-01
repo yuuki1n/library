@@ -4,7 +4,7 @@ import library.dataStructure.collection.*;
 
 public abstract class SWAG<V> {
   private Stk front,back;
-  private MyStack<V> tmp = new MyStack<>();
+  private MyList<V> tmp = new MyList<>();
 
   public SWAG(){
     front = new Stk(){
@@ -44,17 +44,17 @@ public abstract class SWAG<V> {
     while (b.size() > 0)
       a.add(b.pop());
     while (tmp.size() > 0)
-      b.add(tmp.pop());
+      b.add(tmp.pollLast());
   }
 
   public int size(){ return front.size() +back.size(); }
 
   abstract class Stk{
-    private MyStack<V> val,sum;
+    private MyList<V> val,sum;
 
     private Stk(){
-      val = new MyStack<>();
-      sum = new MyStack<>();
+      val = new MyList<>();
+      sum = new MyList<>();
       sum.add(e());
     }
 
@@ -68,8 +68,8 @@ public abstract class SWAG<V> {
     abstract V agg(V sum,V v);
 
     private V pop(){
-      sum.pop();
-      return val.pop();
+      sum.pollLast();
+      return val.pollLast();
     }
 
     private V peekSum(){ return sum.peek(); }
