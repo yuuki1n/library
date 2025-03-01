@@ -24,6 +24,8 @@ public class MinCostFlow extends Dijkstra<long[], Long>{
   @Override
   protected long[] inv(long[] l){ return new long[]{-l[0], 0}; }
 
+  public void addEdge(int u,int v,long cost,long cap){ addEdge(u,v,new long[]{cost, cap}); }
+
   public long[] flow(int s,int t,long flow){
     long[] ret = new long[2];
     while (0 < flow) {

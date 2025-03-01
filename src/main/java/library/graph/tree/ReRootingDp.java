@@ -35,11 +35,11 @@ public abstract class ReRootingDp<L, D, A> extends Graph<L>{
     for (var e:es)
       e.re.id += n;
 
-    var stk = new MyStack<Edge<L>>();
+    var stk = new MyList<Edge<L>>();
     var se = new Edge<L>(n -1,-1,0,null);
     stk.add(se);
     while (!stk.isEmpty()) {
-      var e = stk.pop();
+      var e = stk.pollLast();
       if (dp[e.id] == null) {
         dp[e.id] = e();
         for (var ee:go(e.v))
@@ -57,7 +57,7 @@ public abstract class ReRootingDp<L, D, A> extends Graph<L>{
     }
     stk.add(se);
     while (!stk.isEmpty()) {
-      var e = stk.pop();
+      var e = stk.pollLast();
       var es = go(e.v);
       int n = es.size();
       D[] pre = Util.cast(new Object[n +1]),suf = Util.cast(new Object[n +1]);

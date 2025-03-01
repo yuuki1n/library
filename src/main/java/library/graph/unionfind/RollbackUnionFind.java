@@ -8,7 +8,7 @@ import library.dataStructure.collection.*;
  *
  */
 public class RollbackUnionFind extends UnionFind{
-  private MyStack<int[]> hst = new MyStack<>();
+  private MyList<int[]> hst = new MyList<>();
 
   public RollbackUnionFind(int n){ super(n); }
 
@@ -30,9 +30,9 @@ public class RollbackUnionFind extends UnionFind{
   public void undo(){
     int[] h;
     for (int i = 0;i < 2;i++)
-      nxt[(h = hst.pop())[0]] = h[1];
+      nxt[(h = hst.pollLast())[0]] = h[1];
     for (int i = 0;i < 2;i++)
-      dat[(h = hst.pop())[0]] = h[1];
+      dat[(h = hst.pollLast())[0]] = h[1];
     num++;
   }
 }
