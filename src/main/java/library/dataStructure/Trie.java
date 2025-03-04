@@ -18,11 +18,13 @@ public abstract class Trie<V> {
 
   abstract V e();
 
-  public MyList<Node> path(char[] s){
+  public MyList<Node> path(char[] s){ return path(Util.arrI(s.length,i -> s[i])); }
+
+  public MyList<Node> path(int[] s){
     MyList<Node> q = new MyList<>(s.length +1);
     var nd = root;
     q.add(nd);
-    for (char c:s) {
+    for (int c:s) {
       if (nd.ch[c] == null)
         nd.ch[c] = new Node();
       q.add(nd = nd.ch[c]);
@@ -31,7 +33,7 @@ public abstract class Trie<V> {
   }
 
   class Node{
-    private Node[] ch = Util.cast(Array.newInstance(this.getClass(),b));
+    public Node[] ch = Util.cast(Array.newInstance(this.getClass(),b));
     public V v = e();
   }
 }
