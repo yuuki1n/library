@@ -2,6 +2,8 @@ package library.dataStructure;
 
 import static java.lang.Math.*;
 
+import java.util.*;
+
 public class AVLTree{
   private Node root;
 
@@ -29,11 +31,11 @@ public class AVLTree{
     return balance(nd);
   }
 
-  public void del(long v){ del(v,1); }
+  public void remove(long v){ remove(v,1); }
 
-  public void del(long v,int k){ root = del(root,v,k); }
+  public void remove(long v,int k){ root = remove(root,v,k); }
 
-  private Node del(Node nd,long v,int k){
+  private Node remove(Node nd,long v,int k){
     if (nd.lft == null) {
       int c = Long.compare(nd.val,v);
       if (c == 0)
@@ -41,7 +43,7 @@ public class AVLTree{
       return c != 0 || 0 < nd.sz ? nd : null;
     }
     int c = Long.compare(v,nd.rht.l) *2 +1;
-    Node del = del(c < 0 ? nd.lft : nd.rht,v,k);
+    Node del = remove(c < 0 ? nd.lft : nd.rht,v,k);
     if (del == null)
       return nd.cld(-c);
     nd.cld(c,del);
@@ -69,6 +71,20 @@ public class AVLTree{
         ret += get(nd.rht,max(0,l -nd.lft.sz),r -nd.lft.sz);
       return ret;
     }
+  }
+
+  public int idx(long v){ return root == null || v < root.l ? 0 : idx(root,v); }
+
+  private int idx(Node nd,long v){
+    if (nd.lft == null)
+      return v <= nd.val ? 0 : nd.sz;
+    return v < nd.rht.l ? idx(nd.lft,v) : nd.lft.sz +idx(nd.rht,v);
+  }
+
+  public boolean contains(long v){ return root == null ? false : contains(root,v); }
+
+  private boolean contains(Node nd,long v){
+    return nd.lft == null ? nd.val == v : v < nd.rht.l ? contains(nd.lft,v) : contains(nd.rht,v);
   }
 
   public int size(){ return root == null ? 0 : root.sz; }
@@ -109,5 +125,13 @@ public class AVLTree{
     private void cld(int c,Node nd){ nd = c < 0 ? (lft = nd) : (rht = nd); }
 
     private long val(){ return lft == null && 1 < sz ? val *sz : val; }
+  }
+
+  @Override
+  public String toString(){
+    List<Long> list = new ArrayList<>();
+    for (int i = 0;i < size();i++)
+      list.add(get(i));
+    return Arrays.toString(list.stream().mapToLong(z -> z).toArray());
   }
 }
