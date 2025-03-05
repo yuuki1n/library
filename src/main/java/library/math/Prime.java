@@ -12,15 +12,15 @@ public class Prime{
       arrI = {2, 7, 61},
       arrL = {2, 325, 9375, 28178, 450775, 9780504, 1795265022};
 
-  public Prime(){ this(1_000_000); }
+  public Prime(){ this(10_000_000); }
 
   public Prime(int n){
-    spf = new long[n +1];
-    Arrays.setAll(spf,i -> i);
-    for (int p = 2;p *p <= n;p++)
-      if (spf[p] == p)
-        for (int l = p *p;l <= n;l += p)
-          spf[l] = p;
+    spf = new long[n +1 >>1];
+    Arrays.setAll(spf,i -> i <<1 |1);
+    for (int p = 3;p *p <= n;p += 2)
+      if (spf[p >>1] == p)
+        for (int l = p *p;l <= n;l += p <<1)
+          spf[l >>1] = p;
   }
 
   public long[] divisors(long n){
@@ -63,10 +63,10 @@ public class Prime{
   }
 
   public boolean isPrime(long n){
-    if (n < spf.length)
-      return 1 < n && spf[(int) n] == n;
     if ((n &1) == 0)
-      return false;
+      return n == 2;
+    if (n >>1 < spf.length)
+      return 1 < n && spf[(int) n >>1] == n;
     ModInt bm = new ModInt(n);
     long lsb = n -1 &-n +1;
     long m = (n -1) /lsb;
@@ -85,10 +85,10 @@ public class Prime{
   }
 
   private long rho(long n){
-    if (n < spf.length)
-      return spf[(int) n];
     if ((n &1) == 0)
       return 2;
+    if (n >>1 < spf.length)
+      return spf[(int) n >>1];
     ModInt bm = new ModInt(n);
     for (long t;;) {
       long x = 0,y = x,q = 1,c = Util.rd.nextLong(n -1) +1;
