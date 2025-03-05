@@ -19,12 +19,12 @@ public class MinCostFlow extends Dijkstra<long[], Long>{
   protected Long inf(){ return Util.infL; }
 
   @Override
-  protected Long f(Long l,Edge<long[]> e){ return e.val[1] == 0 ? inf() : l +e.val[0] +h[e.u] -h[e.v]; }
+  protected Long f(Long l,Edge<long[]> e){ return e.val[0] == 0 ? inf() : l +e.val[1] +h[e.u] -h[e.v]; }
 
   @Override
-  protected long[] inv(long[] l){ return new long[]{-l[0], 0}; }
+  protected long[] inv(long[] l){ return new long[]{0, -l[1]}; }
 
-  public void addEdge(int u,int v,long cost,long cap){ addEdge(u,v,new long[]{cost, cap}); }
+  public void addEdge(int u,int v,long cap,long cost){ addEdge(u,v,new long[]{cap, cost}); }
 
   public long[] flow(int s,int t,long flow){
     long[] ret = new long[2];
@@ -37,11 +37,11 @@ public class MinCostFlow extends Dijkstra<long[], Long>{
       long cost = 0;
       long f = flow;
       for (var e:path)
-        f = min(f,e.val[1]);
+        f = min(f,e.val[0]);
       for (var e:path) {
-        cost += e.val[0];
-        e.val[1] -= f;
-        e.re.val[1] += f;
+        cost += e.val[1];
+        e.val[0] -= f;
+        e.re.val[0] += f;
       }
       flow -= f;
       ret[0] += cost *f;
