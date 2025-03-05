@@ -29,9 +29,8 @@ public class MyList<E> implements Iterable<E>{
   public void add(E t){ addLast(t); }
 
   public void addFirst(E e){
-    hd = hd -1 +arr.length &arr.length -1;
+    hd = hd -1 &arr.length -1;
     arr[hd] = e;
-
     if (hd == tl)
       grow();
   }
@@ -47,7 +46,7 @@ public class MyList<E> implements Iterable<E>{
 
   public E peekFirst(){ return arr[hd]; }
 
-  public E peekLast(){ return arr[tl -1 +arr.length &arr.length -1]; }
+  public E peekLast(){ return arr[tl -1 &arr.length -1]; }
 
   public E poll(){ return pollFirst(); }
 
@@ -58,7 +57,7 @@ public class MyList<E> implements Iterable<E>{
   }
 
   public E pollLast(){
-    tl = tl -1 +arr.length &arr.length -1;
+    tl = tl -1 &arr.length -1;
     return arr[tl];
   }
 
@@ -67,7 +66,7 @@ public class MyList<E> implements Iterable<E>{
   public E remove(int i){
     i = hd +i &arr.length -1;
     E ret = arr[i];
-    tl = tl -1 +arr.length &arr.length -1;
+    tl = tl -1 &arr.length -1;
     while (i != tl) {
       arr[i] = arr[i +1 &arr.length -1];
       i = i +1 &arr.length -1;
@@ -83,16 +82,14 @@ public class MyList<E> implements Iterable<E>{
   public void swap(int i,int j){
     i = hd +i &arr.length -1;
     j = hd +j &arr.length -1;
-    E t = arr[i];
-    arr[i] = arr[j];
-    arr[j] = t;
+    Util.swap(arr,i,j);
   }
 
   public void set(int i,E t){ arr[hd +i &arr.length -1] = t; }
 
   public void clear(){ tl = hd; }
 
-  public int size(){ return tl -hd +arr.length &arr.length -1; }
+  public int size(){ return tl -hd &arr.length -1; }
 
   public boolean isEmpty(){ return tl == hd; }
 
