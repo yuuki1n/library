@@ -57,8 +57,8 @@ public class MaxFlow extends Graph<Long>{
       return flow;
     long ret = 0;
     var list = bk(u);
-    for (int eM = list.size();ei[u] < eM;ei[u]++) {
-      Edge<Long> re = list.get(ei[u]),e = re.re;
+    for (int eM = list.length;ei[u] < eM;ei[u]++) {
+      Edge<Long> re = list[ei[u]],e = re.re;
       if (level[u] <= level[e.u] || e.val < base)
         continue;
       long f = dfs(s,e.u,min(flow -ret,e.val),base);

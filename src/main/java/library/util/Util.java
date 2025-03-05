@@ -41,14 +41,12 @@ public class Util{
     return arr;
   }
 
-  public int[][] addId(int[][] T){
-    return arr(new int[T.length][],i -> {
-      int[] t = copyOf(T[i],T[i].length +1);
-      t[t.length -1] = i;
-      return t;
-    });
-  }
-
   @SuppressWarnings("unchecked")
   public static <T> T cast(Object obj){ return (T) obj; }
+
+  public static <T> void swap(T[] arr,int i,int j){
+    T t = arr[i];
+    arr[i] = arr[j];
+    arr[j] = t;
+  }
 }

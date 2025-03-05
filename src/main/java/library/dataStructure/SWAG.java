@@ -62,7 +62,7 @@ public abstract class SWAG<V> {
 
     private void add(V v){
       val.add(v);
-      sum.add(agg(sum.peek(),v));
+      sum.add(agg(sum.peekLast(),v));
     }
 
     abstract V agg(V sum,V v);
@@ -72,6 +72,6 @@ public abstract class SWAG<V> {
       return val.pollLast();
     }
 
-    private V peekSum(){ return sum.peek(); }
+    private V peekSum(){ return sum.peekLast(); }
   }
 }

@@ -7,6 +7,7 @@ import java.util.function.*;
 
 import library.dataStructure.collection.*;
 import library.graph.*;
+import library.util.*;
 
 public class HLD extends Graph<Object>{
   private int[] p,hp,l,r;
@@ -20,9 +21,9 @@ public class HLD extends Graph<Object>{
   }
 
   public MyList<int[]> auxiliary(MyList<Integer> lis){
+    MyList<int[]> ret = new MyList<>();
     lis = new MyList<>(lis);
     lis.add(0);
-    MyList<int[]> ret = new MyList<>();
     lis.sort(Comparator.comparing(i -> l[i]));
     for (int i = lis.size() -1;i > 0;i--)
       lis.add(lca(lis.get(i -1),lis.get(i)));
@@ -30,10 +31,10 @@ public class HLD extends Graph<Object>{
     MyList<Integer> stk = new MyList<>();
     stk.add(lis.get(0));
     for (var y:lis) {
-      while (r[stk.peek()] <= l[y])
+      while (r[stk.peekLast()] <= l[y])
         stk.pollLast();
-      if (!stk.peek().equals(y))
-        ret.add(new int[]{stk.peek(), y});
+      if (!stk.peekLast().equals(y))
+        ret.add(new int[]{stk.peekLast(), y});
       stk.add(y);
     }
     return ret;
@@ -97,9 +98,9 @@ public class HLD extends Graph<Object>{
 
     for (int u = 0;u < n;u++) {
       var go = go(u);
-      for (int i = 1;i < go.size();i++)
-        if (r[u] < r[go.get(0).v] || r[go.get(0).v] < r[go.get(i).v] && r[go.get(i).v] < r[u])
-          go.swap(0,i);
+      for (int i = 1;i < go.length;i++)
+        if (r[u] < r[go[0].v] || r[go[0].v] < r[go[i].v] && r[go[i].v] < r[u])
+          Util.swap(go,0,i);
     }
 
     stk.add(s);
@@ -109,8 +110,8 @@ public class HLD extends Graph<Object>{
       if (hp[u] < 0)
         hp[u] = u;
       var go = go(u);
-      for (int i = go.size();i-- > 0;) {
-        var v = go.get(i).v;
+      for (int i = go.length;i-- > 0;) {
+        var v = go[i].v;
         if (v == p[u])
           continue;
         if (i == 0)

@@ -29,7 +29,13 @@ public abstract class ReRootingDp<L, D, A> extends Graph<L>{
   protected abstract D adj(D v,Edge<L> e);
   protected abstract A ans(int u,D sum);
 
-  protected MyList<D> sur(int u){ return go(u).map(e -> dp[e.id]); }
+  protected D[] sur(int u){
+    Edge<L>[] arr = go(u);
+    D[] ret = Util.cast(new Object[arr.length]);
+    for (int i = 0;i < arr.length;i++)
+      ret[i] = dp[arr[i].id];
+    return ret;
+  }
 
   public A[] calc(){
     for (var e:es)
@@ -59,19 +65,19 @@ public abstract class ReRootingDp<L, D, A> extends Graph<L>{
     while (!stk.isEmpty()) {
       var e = stk.pollLast();
       var es = go(e.v);
-      int n = es.size();
+      int n = es.length;
       D[] pre = Util.cast(new Object[n +1]),suf = Util.cast(new Object[n +1]);
       pre[0] = e();
       suf[n] = e();
       for (int i = 0;i < n;i++) {
-        pre[i +1] = agg(pre[i],dp[es.get(i).id]);
-        suf[n -1 -i] = agg(dp[es.get(n -1 -i).id],suf[n -i]);
+        pre[i +1] = agg(pre[i],dp[es[i].id]);
+        suf[n -1 -i] = agg(dp[es[n -1 -i].id],suf[n -i]);
       }
 
       ans[e.v] = ans(e.v,suf[0]);
 
       for (int i = 0;i < n;i++) {
-        Edge<L> ee = es.get(i);
+        Edge<L> ee = es[i];
         if (ee != e.re) {
           dp[ee.re.id] = adj(agg(pre[i],suf[i +1]),ee.re);
           stk.add(ee);
@@ -81,13 +87,11 @@ public abstract class ReRootingDp<L, D, A> extends Graph<L>{
     return ans;
   }
 
+  @Override
   public void clear(){
     dp[n -1] = null;
-    for (var e:es) {
+    for (var e:es)
       dp[e.id] = dp[e.re.id] = null;
-      go(e.u).clear();
-      go(e.v).clear();
-    }
-    es.clear();
+    super.clear();
   }
 }
