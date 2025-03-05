@@ -17,8 +17,13 @@ public class MyList<E> implements Iterable<E>{
   public MyList(int n){ arr = Util.cast(new Object[Integer.highestOneBit(max(16,n) -1) <<1]); }
 
   public MyList(MyList<E> org){
-    this(org.size());
+    this(org.size() +1);
     System.arraycopy(org.arr,0,arr,0,tl = org.size());
+  }
+
+  public MyList(Collection<E> col){
+    this(col.size() +1);
+    col.forEach(this::add);
   }
 
   public void add(E t){ addLast(t); }
@@ -114,6 +119,8 @@ public class MyList<E> implements Iterable<E>{
       ret.add(get(i));
     return ret;
   }
+
+  public int[] toIntArray(ToIntFunction<E> f){ return Util.arrI(size(),i -> f.applyAsInt(get(i))); }
 
   public E[] toArray(){
     if (hd == tl)
