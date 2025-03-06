@@ -10,7 +10,7 @@ import library.util.*;
 public abstract class AVLSegmentTree<V extends BaseV, F> {
   private V e = e();
   private Node root;
-  private V[] ret = Util.cast(new BaseV[2]);
+  private V[] ret;
   private int ri;
 
   public AVLSegmentTree(int n){
@@ -19,6 +19,7 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
   }
 
   public AVLSegmentTree(){
+    ret = Util.cast(new BaseV[2]);
     ret[ri] = e();
     ri = 1;
   }
@@ -97,7 +98,7 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
     return nd;
   }
 
-  public void toggle(int l,int r){ root = l < r ? toggle(root,l,r) : root; }
+  public void toggle(int l,int r){ root = toggle(root,l,r); }
 
   private Node toggle(Node nd,int l,int r){
     nd.push();
@@ -109,6 +110,23 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
       nd = merge(toggle(nd.lft,l,r),nd,nd.rht);
     } else
       nd.toggle();
+    return nd;
+  }
+
+  public void shift(int l,int r,int k){ root = 0 < (k %= r -l) ? shift(root,l,r,k) : root; }
+
+  private Node shift(Node nd,int l,int r,int k){
+    nd.push();
+    if (0 < l) {
+      split(nd,l);
+      nd = merge(nd.lft,nd,shift(nd.rht,0,r -l,k));
+    } else if (r < nd.sz) {
+      split(nd,r);
+      nd = merge(shift(nd.lft,l,r,k),nd,nd.rht);
+    } else {
+      split(nd,k);
+      nd = merge(nd.rht,nd,nd.lft);
+    }
     return nd;
   }
 
@@ -196,7 +214,7 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
 
   protected V pow(V a,int n){
     V ret = e();
-    for (V t = ag(e(),e,a);0 < n;n >>= 1,t = ag(e(),t,t))
+    for (V t = a;0 < n;n >>= 1,t = ag(e(),t,t))
       if (0 < (n &1))
         ret = ag(e(),ret,t);
     return ret;
