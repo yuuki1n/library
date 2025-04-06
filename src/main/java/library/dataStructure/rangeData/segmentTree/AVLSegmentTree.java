@@ -24,7 +24,7 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
     ri = 1;
   }
 
-  public void build(int n,IntFunction<V> init){ root = build(0,n,init); }
+  public void build(int n,IntFunction<V> init){ root = n == 0 ? null : build(0,n,init); }
 
   private Node build(int l,int r,IntFunction<V> init){
     if (r -l == 1)
@@ -73,6 +73,17 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
     return balance(nd);
   }
 
+  public void del(int l,int r){ root = l < r ? del(root,l,r) : root; }
+
+  private Node del(Node nd,int l,int r){
+    if (r -l == nd.sz)
+      return null;
+    nd.push();
+    return 0 < l && r < nd.sz
+        ? merge(split(nd,l).lft,nd,del(nd.rht,0,r -l))
+        : 0 < l ? split(nd,l).lft : split(nd,r).rht;
+  }
+
   public void upd(int i,F f){ upd(i,i +1,f); }
 
   public void upd(int l,int r,F f){
@@ -98,39 +109,25 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
     return nd;
   }
 
-  public void toggle(int l,int r){ root = toggle(root,l,r); }
+  public void toggle(int l,int r){ root = l < r ? toggle(root,l,r) : root; }
 
   private Node toggle(Node nd,int l,int r){
     nd.push();
-    if (0 < l) {
-      split(nd,l);
-      nd = merge(nd.lft,nd,toggle(nd.rht,0,r -l));
-    } else if (r < nd.sz) {
-      split(nd,r);
-      nd = merge(toggle(nd.lft,l,r),nd,nd.rht);
-    } else
-      nd.toggle();
-    return nd;
+    return 0 < l ? merge(split(nd,l).lft,nd,toggle(nd.rht,0,r -l))
+        : r < nd.sz ? merge(toggle(split(nd,r).lft,l,r),nd,nd.rht)
+            : nd.toggle();
   }
 
   public void shift(int l,int r,int k){ root = 0 < (k %= r -l) ? shift(root,l,r,k) : root; }
 
   private Node shift(Node nd,int l,int r,int k){
     nd.push();
-    if (0 < l) {
-      split(nd,l);
-      nd = merge(nd.lft,nd,shift(nd.rht,0,r -l,k));
-    } else if (r < nd.sz) {
-      split(nd,r);
-      nd = merge(shift(nd.lft,l,r,k),nd,nd.rht);
-    } else {
-      split(nd,k);
-      nd = merge(nd.rht,nd,nd.lft);
-    }
-    return nd;
+    return 0 < l ? merge(split(nd,l).lft,nd,shift(nd.rht,0,r -l,k))
+        : r < nd.sz ? merge(shift(split(nd,r).lft,l,r,k),nd,nd.rht)
+            : merge(split(nd,k).rht,nd,nd.lft);
   }
 
-  private void split(Node nd,int i){
+  private Node split(Node nd,int i){
     if (nd.lft == null)
       split(nd,1,ag(e(),e,nd.val),i,nd.sz);
     else {
@@ -147,6 +144,7 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
         nd.lft = merge(nd.lft,rht,rht.lft);
       }
     }
+    return nd;
   }
 
   private Node merge(Node lft,Node nd,Node rht){
