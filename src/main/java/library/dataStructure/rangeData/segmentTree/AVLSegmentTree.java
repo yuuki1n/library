@@ -48,12 +48,13 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
       split(nd,i == 0 ? 1 : -1,v,k,nd.sz +k);
     else {
       if (nd.lft == null)
-        split(nd,1,ag(e(),e,nd.val),i,nd.sz);
-      else
-        nd.push();
-      if (i < nd.lft.sz)
+      split(nd,1,ag(e(),e,nd.val),i,nd.sz);
+    else
+      nd.push();
+
+    if (i < nd.lft.sz)
         nd.lft = ins(nd.lft,i,v,k);
-      else
+    else
         nd.rht = ins(nd.rht,i -nd.lft.sz,v,k);
     }
     return balance(nd);
@@ -97,12 +98,13 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
       nd.prop(f);
     else if (l < r) {
       if (nd.lft == null)
-        split(nd,1,ag(e(),e,nd.val),0 < l ? l : r,nd.sz);
-      else
-        nd.push();
-      if (l < nd.lft.sz)
+      split(nd,1,ag(e(),e,nd.val),0 < l ? l : r,nd.sz);
+    else
+      nd.push();
+
+    if (l < nd.lft.sz)
         nd.lft = upd(nd.lft,l,min(nd.lft.sz,r),f);
-      if (nd.lft.sz < r)
+    if (nd.lft.sz < r)
         nd.rht = upd(nd.rht,max(0,l -nd.lft.sz),r -nd.lft.sz,f);
       nd = balance(nd);
     }
@@ -116,7 +118,7 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
     return 0 < l ? merge(split(nd,l).lft,nd,toggle(nd.rht,0,r -l))
         : r < nd.sz ? merge(toggle(split(nd,r).lft,l,r),nd,nd.rht)
             : nd.toggle();
-  }
+    }
 
   public void shift(int l,int r,int k){ root = 0 < (k %= r -l) ? shift(root,l,r,k) : root; }
 
@@ -179,6 +181,7 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
       get(root,l,min(r,size()));
     return ret[ri ^= 1];
   }
+
 
   private void get(Node nd,int l,int r){
     if (0 == l && r == nd.sz)
@@ -280,6 +283,10 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
       map(val,f);
       if (lft != null)
         laz = laz == null ? f : comp(laz,f);
+      if (val.fail) {
+        push();
+        update();
+      }
     }
 
     private Node toggle(){
@@ -298,5 +305,5 @@ public abstract class AVLSegmentTree<V extends BaseV, F> {
     private void cld(int c,Node nd){ nd = c < 0 ? (lft = nd) : (rht = nd); }
 
     private V val(){ return lft == null && 1 < sz ? pw(val,sz) : val; }
+    }
   }
-}
