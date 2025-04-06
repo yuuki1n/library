@@ -4,6 +4,7 @@ import static java.lang.Math.*;
 import static java.util.Arrays.*;
 
 import java.util.*;
+import java.util.stream.*;
 
 import library.util.*;
 
@@ -22,6 +23,8 @@ public class Prime{
         for (int l = p *p;l <= n;l += p <<1)
           spf[l >>1] = p;
   }
+
+  public int[] primes(int n){ return IntStream.range(0,n).filter(this::isPrime).toArray(); }
 
   public long[] divisors(long n){
     long[] fs = factorize(n);
