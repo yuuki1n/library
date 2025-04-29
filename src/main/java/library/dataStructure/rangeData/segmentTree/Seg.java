@@ -14,13 +14,14 @@ import library.util.*;
  */
 public abstract class Seg<V extends BaseV, F> {
   private int n,log;
-  private V[] val;
+  private V[] ret,val;
   private F[] lazy;
 
   protected Seg(int n){
     this.n = n;
     while (1 <<log <= n)
       log++;
+    ret = Util.cast(new BaseV[]{e(), e()});
     val = Util.cast(new BaseV[n <<1]);
     lazy = Util.cast(new Object[n]);
 
@@ -44,7 +45,6 @@ public abstract class Seg<V extends BaseV, F> {
   public V get(int i){ return val[i +n]; }
 
   public V get(int l,int r){
-    V[] ret = Util.cast(new BaseV[]{e(), e()});
     int i = 0;
     for (var v:getList(l,r)) {
       agg(ret[i],ret[i ^1],v);
