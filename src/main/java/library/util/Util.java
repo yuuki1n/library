@@ -49,4 +49,67 @@ public class Util{
     arr[i] = arr[j];
     arr[j] = t;
   }
+
+  public static int min(int... arr){
+    int ret = arr[0];
+    for (int i = 1;i < arr.length;i++)
+      ret = Math.min(ret,arr[i]);
+    return ret;
+  }
+
+  public static long min(long... arr){
+    long ret = arr[0];
+    for (int i = 1;i < arr.length;i++)
+      ret = Math.min(ret,arr[i]);
+    return ret;
+  }
+
+  public static double min(double... arr){
+    double ret = arr[0];
+    for (int i = 1;i < arr.length;i++)
+      ret = Math.min(ret,arr[i]);
+    return ret;
+  }
+
+  public static int max(int... arr){
+    int ret = arr[0];
+    for (int i = 1;i < arr.length;i++)
+      ret = Math.max(ret,arr[i]);
+    return ret;
+  }
+
+  public static long max(long... arr){
+    long ret = arr[0];
+    for (int i = 1;i < arr.length;i++)
+      ret = Math.max(ret,arr[i]);
+    return ret;
+  }
+
+  public static double max(double... arr){
+    double ret = arr[0];
+    for (int i = 1;i < arr.length;i++)
+      ret = Math.max(ret,arr[i]);
+    return ret;
+  }
+
+  public static double sum(double... A){
+    double ret = 0;
+    for (var a:A)
+      ret += a;
+    return ret;
+  }
+
+  public static long sum(int... A){
+    long ret = 0;
+    for (var a:A)
+      ret += a;
+    return ret;
+  }
+
+  public static long sum(long... A){
+    long ret = 0;
+    for (var a:A)
+      ret += a;
+    return ret;
+  }
 }
