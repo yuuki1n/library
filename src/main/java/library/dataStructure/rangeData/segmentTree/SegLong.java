@@ -75,8 +75,10 @@ public abstract class SegLong{
 
   private void prop(int i,long f){
     val[i] = map(val[i],f);
-    if (i < n)
+    if (i < n) {
       lazy[i] = lazflg[i] ? comp(lazy[i],f) : f;
+      lazflg[i] = true;
+    }
   }
 
   private int oddPart(int i){ return i /(i &-i); }
