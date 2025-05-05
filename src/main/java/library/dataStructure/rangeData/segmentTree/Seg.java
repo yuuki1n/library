@@ -13,14 +13,12 @@ import library.util.*;
  * @param <F> 作用の型
  */
 public abstract class Seg<V extends BaseV, F> {
-  private int n,log;
+  private int n;
   private V[] ret,val;
   private F[] lazy;
 
   protected Seg(int n){
     this.n = n;
-    while (1 <<log <= n)
-      log++;
     ret = Util.cast(new BaseV[]{e(), e()});
     val = Util.cast(new BaseV[n <<1]);
     lazy = Util.cast(new Object[n]);
@@ -46,6 +44,8 @@ public abstract class Seg<V extends BaseV, F> {
 
   public V get(int l,int r){
     int i = 0;
+    ret[i] = e();
+    i ^= 1;
     for (var v:getList(l,r)) {
       agg(ret[i],ret[i ^1],v);
       ret[i].sz = ret[i ^= 1].sz +v.sz;
@@ -90,7 +90,7 @@ public abstract class Seg<V extends BaseV, F> {
   }
 
   protected void down(int l,int r){
-    int i = log;
+    int i = 32 -Integer.numberOfLeadingZeros(n);
     for (l = oddPart(l +n),r = oddPart(r +n);i > 0;i--) {
       push(l >>i);
       push(r >>i);
