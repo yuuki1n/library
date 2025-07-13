@@ -5,6 +5,7 @@ import static java.lang.Math.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import library.util.*;
 
@@ -153,4 +154,6 @@ public class MyList<E> implements Iterable<E>{
       public E next(){ return get(i++); }
     };
   }
+
+  public Stream<E> stream(){ return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator(),0),false); }
 }
