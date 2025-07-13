@@ -2,11 +2,14 @@ package library.graph;
 
 import static java.lang.Math.*;
 
+import java.util.*;
+
 import library.util.*;
 
 public class MaxFlow extends Graph<Long>{
-  private long maxCap = 0;
+  private long maxCap;
   private int[] ei,level;
+  private int s = -1,t = -1;
 
   public MaxFlow(int n){ super(n,false); }
 
@@ -20,21 +23,36 @@ public class MaxFlow extends Graph<Long>{
   }
 
   public long maxFlow(int s,int t){
+    assert this.s < 0 && this.t < 0;
+    this.s = s;
+    this.t = t;
     long flow = 0L;
-
     for (long base = Long.highestOneBit(maxCap);base > 0;base >>= 1)
       while (true) {
-        bfs(s,t,base);
+        bfs(base);
         if (level[t] == 0)
           break;
         ei = new int[n];
-        for (long f;0 < (f = dfs(s,t,Util.infL,base));)
+        for (long f;0 < (f = dfs(t,Util.infL,base));)
           flow += f;
       }
     return flow;
   }
 
-  private void bfs(int s,int t,long base){
+  public List<Edge<Long>> useEgdes(){
+    int[] len = Util.arrI(n,i -> Util.infI),q = new int[n];
+    int qi = 0,qj = 0;
+    len[s] = 0;
+    q[qj++] = s;
+    for (int u;qi < qj;)
+      for (var e:go(u = q[qi++]))
+        if (0 < e.val && len[e.v] > len[u] +1)
+          len[q[qj++] = e.v] = len[u] +1;
+
+    return es.stream().filter(e -> len[e.u] < Util.infI && len[e.v] == Util.infI).toList();
+  }
+
+  private void bfs(long base){
     int[] que = new int[n];
     level = new int[n];
     int hd = 0,tl = 0;
@@ -52,7 +70,7 @@ public class MaxFlow extends Graph<Long>{
     }
   }
 
-  private long dfs(int s,int u,long flow,long base){
+  private long dfs(int u,long flow,long base){
     if (u == s)
       return flow;
     long ret = 0;
@@ -61,7 +79,7 @@ public class MaxFlow extends Graph<Long>{
       Edge<Long> re = list[ei[u]],e = re.re;
       if (level[u] <= level[e.u] || e.val < base)
         continue;
-      long f = dfs(s,e.u,min(flow -ret,e.val),base);
+      long f = dfs(e.u,min(flow -ret,e.val),base);
       e.val -= f;
       re.val += f;
       ret += f;
