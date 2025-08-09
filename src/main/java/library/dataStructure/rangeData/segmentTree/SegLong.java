@@ -4,17 +4,24 @@ public abstract class SegLong{
   private int n;
   private long[] val,lazy;
   private boolean[] lazflg;
+  private int[] sz;
 
   protected SegLong(int n){
     this.n = n;
     val = new long[n <<1];
     lazy = new long[n];
     lazflg = new boolean[n];
+    sz = new int[n <<1];
 
     for (int i = -1;++i < n;)
       val[i +n] = init(i);
     for (int i = n;--i > 0;)
       merge(i);
+
+    for (int i = n;i < val.length;i++)
+      sz[i] = 1;
+    for (int i = n -1;--i > 0;)
+      sz[i] = sz[i <<1] +sz[i <<1 |1];
   }
 
   public void upd(int i,long f){ prop(i +n,f); }
@@ -45,7 +52,7 @@ public abstract class SegLong{
 
   protected abstract long e();
   protected abstract long agg(long a,long b);
-  protected abstract long map(long v,long f);
+  protected abstract long map(long v,long f,int sz);
   protected abstract long comp(long f,long g);
 
   protected void up(int l,int r){
@@ -74,7 +81,7 @@ public abstract class SegLong{
   }
 
   private void prop(int i,long f){
-    val[i] = map(val[i],f);
+    val[i] = map(val[i],f,sz[i]);
     if (i < n)
       lazy[i] = lazflg[i] ? comp(lazy[i],f) : f;
   }
